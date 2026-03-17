@@ -1,3 +1,5 @@
+import Badge from "@/components/ui/Badge";
+
 const steps = [
   {
     step: "01",
@@ -38,40 +40,40 @@ const steps = [
 
 export default function HowItWorks() {
   return (
-    <section id="how-it-works" className="py-24 px-4 bg-surface-secondary">
+    <section id="how-it-works" className="py-24 px-4 relative z-10 bg-transparent">
       <div className="max-w-5xl mx-auto">
-        <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 bg-purple-50 text-purple-700 px-4 py-1.5 rounded-full text-sm font-semibold mb-4">
+        <div className="text-center mb-20">
+          <Badge variant="purple" size="md" className="mb-6 bg-white/50">
             Simple 3-Step Process
-          </div>
-          <h2 className="font-heading text-4xl md:text-5xl font-black text-slate-900 mb-4">
+          </Badge>
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-clay-foreground mb-6 tracking-tight">
             From zero to{" "}
-            <span className="gradient-text">posted in minutes</span>
+            <span className="clay-text-gradient">posted in minutes</span>
           </h2>
-          <p className="text-lg text-slate-500 max-w-xl mx-auto">
+          <p className="text-lg md:text-xl text-clay-muted max-w-xl mx-auto font-medium">
             No design skills needed. No scheduling headaches. Just results.
           </p>
         </div>
 
         <div className="relative">
           {/* Connector line (desktop) */}
-          <div className="hidden md:block absolute top-14 left-1/6 right-1/6 h-0.5 bg-gradient-to-r from-blue-200 via-purple-200 to-emerald-200 z-0" />
+          <div className="hidden md:block absolute top-14 left-[15%] right-[15%] h-1 bg-white shadow-sm rounded-full z-0" />
 
-          <div className="grid md:grid-cols-3 gap-8 relative z-10">
+          <div className="grid md:grid-cols-3 gap-10 relative z-10">
             {steps.map((s) => (
               <div key={s.step} className="flex flex-col items-center text-center group">
                 {/* Icon circle */}
                 <div className={`
-                  w-28 h-28 rounded-3xl bg-gradient-to-br ${s.color}
-                  flex items-center justify-center mb-6 shadow-lg
-                  transition-transform duration-300 group-hover:scale-105 group-hover:-translate-y-1
+                  w-28 h-28 rounded-[32px] bg-gradient-to-br ${s.color}
+                  flex items-center justify-center mb-6 shadow-clayButton
+                  transition-all duration-300 ease-out group-hover:scale-110 group-hover:-translate-y-2 group-hover:shadow-clayButtonHover
                 `}>
                   {s.icon}
                 </div>
 
-                <div className="text-xs font-bold text-slate-400 tracking-widest mb-2">STEP {s.step}</div>
-                <h3 className="font-heading font-bold text-xl text-slate-900 mb-3">{s.title}</h3>
-                <p className="text-slate-500 leading-relaxed text-sm max-w-xs">{s.desc}</p>
+                <div className="text-sm font-black text-clay-muted/60 tracking-[0.2em] mb-3">STEP {s.step}</div>
+                <h3 className="font-black text-2xl text-clay-foreground mb-4 tracking-tight">{s.title}</h3>
+                <p className="text-clay-muted leading-relaxed text-base max-w-[280px] font-medium">{s.desc}</p>
               </div>
             ))}
           </div>

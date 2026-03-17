@@ -1,0 +1,559 @@
+
+> lana@0.1.0 dev
+> next dev
+
+ΓÜá Warning: Next.js inferred your workspace root, but it may not be correct.
+ We detected multiple lockfiles and selected the directory of C:\Users\DANNY\package-lock.json as the root directory.
+ To silence this warning, set `turbopack.root` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#root-directory for more information.
+ Detected additional lockfiles: 
+   * C:\Users\DANNY\.gemini\antigravity\scratch\lana\package-lock.json
+
+Γû▓ Next.js 16.1.7 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.1.139:3000
+
+Γ£ô Starting...
+Γ£ô Ready in 11.5s
+ GET /brand 200 in 7.9s (compile: 4.2s, render: 3.7s)
+ GET / 200 in 1946ms (compile: 703ms, render: 1243ms)
+ GET / 200 in 21.6s (compile: 580ms, render: 21.0s)
+ GET / 200 in 9.9s (compile: 104ms, render: 9.8s)
+ GET / 200 in 9.0s (compile: 76ms, render: 8.9s)
+Γ£ô Compiled in 10.4s
+ GET / 200 in 11.6s (compile: 2.9s, render: 8.7s)
+ GET / 200 in 4.2s (compile: 1021ms, render: 3.2s)
+ GET / 200 in 1252ms (compile: 67ms, render: 1186ms)
+ GET / 200 in 4.3s (compile: 591ms, render: 3.7s)
+ GET / 200 in 4.3s (compile: 2.6s, render: 1686ms)
+ GET / 200 in 4.3s (compile: 24ms, render: 4.2s)
+ GET / 200 in 195ms (compile: 5ms, render: 190ms)
+ GET / 200 in 877ms (compile: 6ms, render: 871ms)
+ GET / 200 in 545ms (compile: 21ms, render: 525ms)
+Γ£ô Compiled in 7.6s
+ GET / 200 in 7.1s (compile: 171ms, render: 7.0s)
+Γ£ô Compiled in 1967ms
+Γ£ô Compiled in 3s
+ GET / 200 in 5.1s (compile: 2.3s, render: 2.8s)
+ GET / 200 in 1318ms (compile: 18ms, render: 1300ms)
+ GET / 200 in 945ms (compile: 69ms, render: 876ms)
+Γ£ô Compiled in 293ms
+Γ£ô Compiled in 512ms
+Γ£ô Compiled in 1ms
+ GET / 200 in 5.7s (compile: 991ms, render: 4.7s)
+ GET / 200 in 2.3s (compile: 101ms, render: 2.2s)
+ GET / 200 in 1419ms (compile: 25ms, render: 1394ms)
+ GET /register 200 in 3.6s (compile: 2.9s, render: 655ms)
+Γ£ô Compiled in 4.5s
+ GET /register 200 in 736ms (compile: 110ms, render: 626ms)
+ GET / 200 in 4.5s (compile: 2.1s, render: 2.4s)
+ GET / 200 in 554ms (compile: 18ms, render: 537ms)
+Γ£ô Compiled in 277ms
+ GET /register 200 in 1479ms (compile: 13ms, render: 1466ms)
+ GET / 200 in 1537ms (compile: 320ms, render: 1217ms)
+ GET / 200 in 770ms (compile: 60ms, render: 710ms)
+Γ£ô Compiled in 678ms
+ GET /register 200 in 159ms (compile: 22ms, render: 137ms)
+Γ¿» ReferenceError: Badge is not defined
+    at Features (components\sections\Features.tsx:77:12)
+  75 |         {/* Header */}
+  76 |         <div className="text-center mb-20">
+> 77 |           <Badge variant="outline" size="md" className="mb-6 bg-white/50">
+     |            ^
+  78 |             <span className="text-clay-accent">Γÿà</span> AI-Powered Features
+  79 |           </Badge>
+  80 |           <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-clay-foreground mb-6 tracking-tight"> {
+  digest: '2441132166'
+}
+Γ¿» ReferenceError: Badge is not defined
+    at Features (components\sections\Features.tsx:77:12)
+  75 |         {/* Header */}
+  76 |         <div className="text-center mb-20">
+> 77 |           <Badge variant="outline" size="md" className="mb-6 bg-white/50">
+     |            ^
+  78 |             <span className="text-clay-accent">Γÿà</span> AI-Powered Features
+  79 |           </Badge>
+  80 |           <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-clay-foreground mb-6 tracking-tight"> {
+  digest: '2441132166'
+}
+ GET / 200 in 2.4s (compile: 797ms, render: 1583ms)
+ GET / 200 in 771ms (compile: 57ms, render: 714ms)
+Γ£ô Compiled in 187ms
+ΓÜá Fast Refresh had to perform a full reload due to a runtime error.
+ΓÜá Fast Refresh had to perform a full reload due to a runtime error.
+ GET /register 200 in 145ms (compile: 24ms, render: 121ms)
+Γ¿» ReferenceError: Badge is not defined
+    at Features (components\sections\Features.tsx:77:12)
+  75 |         {/* Header */}
+  76 |         <div className="text-center mb-20">
+> 77 |           <Badge variant="outline" size="md" className="mb-6 bg-white/50">
+     |            ^
+  78 |             <span className="text-clay-accent">Γÿà</span> AI-Powered Features
+  79 |           </Badge>
+  80 |           <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-clay-foreground mb-6 tracking-tight"> {
+  digest: '2441132166'
+}
+Γ¿» ReferenceError: Badge is not defined
+    at HowItWorks (components\sections\HowItWorks.tsx:44:12)
+  42 |       <div className="max-w-5xl mx-auto">
+  43 |         <div className="text-center mb-20">
+> 44 |           <Badge variant="purple" size="md" className="mb-6 bg-white/50">
+     |            ^
+  45 |             Simple 3-Step Process
+  46 |           </Badge>
+  47 |           <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-clay-foreground mb-6 tracking-tight"> {
+  digest: '4044063664'
+}
+Γ¿» ReferenceError: Badge is not defined
+    at Features (components\sections\Features.tsx:77:12)
+  75 |         {/* Header */}
+  76 |         <div className="text-center mb-20">
+> 77 |           <Badge variant="outline" size="md" className="mb-6 bg-white/50">
+     |            ^
+  78 |             <span className="text-clay-accent">Γÿà</span> AI-Powered Features
+  79 |           </Badge>
+  80 |           <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-clay-foreground mb-6 tracking-tight"> {
+  digest: '2441132166'
+}
+Γ¿» ReferenceError: Badge is not defined
+    at HowItWorks (components\sections\HowItWorks.tsx:44:12)
+  42 |       <div className="max-w-5xl mx-auto">
+  43 |         <div className="text-center mb-20">
+> 44 |           <Badge variant="purple" size="md" className="mb-6 bg-white/50">
+     |            ^
+  45 |             Simple 3-Step Process
+  46 |           </Badge>
+  47 |           <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-clay-foreground mb-6 tracking-tight"> {
+  digest: '4044063664'
+}
+ GET / 500 in 6.6s (compile: 429ms, render: 6.1s)
+ GET / 500 in 1675ms (compile: 68ms, render: 1607ms)
+ΓÜá Fast Refresh had to perform a full reload due to a runtime error.
+Γ¿» ReferenceError: Badge is not defined
+    at Features (components\sections\Features.tsx:77:12)
+  75 |         {/* Header */}
+  76 |         <div className="text-center mb-20">
+> 77 |           <Badge variant="outline" size="md" className="mb-6 bg-white/50">
+     |            ^
+  78 |             <span className="text-clay-accent">Γÿà</span> AI-Powered Features
+  79 |           </Badge>
+  80 |           <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-clay-foreground mb-6 tracking-tight"> {
+  digest: '2441132166'
+}
+Γ¿» ReferenceError: Badge is not defined
+    at HowItWorks (components\sections\HowItWorks.tsx:44:12)
+  42 |       <div className="max-w-5xl mx-auto">
+  43 |         <div className="text-center mb-20">
+> 44 |           <Badge variant="purple" size="md" className="mb-6 bg-white/50">
+     |            ^
+  45 |             Simple 3-Step Process
+  46 |           </Badge>
+  47 |           <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-clay-foreground mb-6 tracking-tight"> {
+  digest: '4044063664'
+}
+ΓÜá Fast Refresh had to perform a full reload due to a runtime error.
+ΓÜá Fast Refresh had to perform a full reload due to a runtime error.
+ΓÜá Fast Refresh had to perform a full reload due to a runtime error.
+ GET / 500 in 4.8s (compile: 872ms, render: 3.9s)
+Γ¿» ReferenceError: Badge is not defined
+    at Features (components\sections\Features.tsx:77:12)
+  75 |         {/* Header */}
+  76 |         <div className="text-center mb-20">
+> 77 |           <Badge variant="outline" size="md" className="mb-6 bg-white/50">
+     |            ^
+  78 |             <span className="text-clay-accent">Γÿà</span> AI-Powered Features
+  79 |           </Badge>
+  80 |           <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-clay-foreground mb-6 tracking-tight"> {
+  digest: '2441132166'
+}
+Γ¿» ReferenceError: Badge is not defined
+    at HowItWorks (components\sections\HowItWorks.tsx:44:12)
+  42 |       <div className="max-w-5xl mx-auto">
+  43 |         <div className="text-center mb-20">
+> 44 |           <Badge variant="purple" size="md" className="mb-6 bg-white/50">
+     |            ^
+  45 |             Simple 3-Step Process
+  46 |           </Badge>
+  47 |           <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-clay-foreground mb-6 tracking-tight"> {
+  digest: '4044063664'
+}
+Γ£ô Compiled in 4.2s
+ΓÜá Fast Refresh had to perform a full reload due to a runtime error.
+ΓÜá Fast Refresh had to perform a full reload due to a runtime error.
+Γ¿» ReferenceError: Badge is not defined
+    at Features (components\sections\Features.tsx:77:12)
+  75 |         {/* Header */}
+  76 |         <div className="text-center mb-20">
+> 77 |           <Badge variant="outline" size="md" className="mb-6 bg-white/50">
+     |            ^
+  78 |             <span className="text-clay-accent">Γÿà</span> AI-Powered Features
+  79 |           </Badge>
+  80 |           <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-clay-foreground mb-6 tracking-tight"> {
+  digest: '2441132166'
+}
+Γ¿» ReferenceError: Badge is not defined
+    at HowItWorks (components\sections\HowItWorks.tsx:44:12)
+  42 |       <div className="max-w-5xl mx-auto">
+  43 |         <div className="text-center mb-20">
+> 44 |           <Badge variant="purple" size="md" className="mb-6 bg-white/50">
+     |            ^
+  45 |             Simple 3-Step Process
+  46 |           </Badge>
+  47 |           <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-clay-foreground mb-6 tracking-tight"> {
+  digest: '4044063664'
+}
+ GET /register 200 in 1576ms (compile: 70ms, render: 1506ms)
+ GET /register 200 in 1290ms (compile: 993ms, render: 297ms)
+ GET / 500 in 6.8s (compile: 2.4s, render: 4.4s)
+ GET / 500 in 1972ms (compile: 22ms, render: 1950ms)
+ΓÜá Fast Refresh had to perform a full reload due to a runtime error.
+ΓÜá Fast Refresh had to perform a full reload due to a runtime error.
+Γ£ô Compiled in 350ms
+Γ¿» ReferenceError: Badge is not defined
+    at Features (components\sections\Features.tsx:77:12)
+  75 |         {/* Header */}
+  76 |         <div className="text-center mb-20">
+> 77 |           <Badge variant="outline" size="md" className="mb-6 bg-white/50">
+     |            ^
+  78 |             <span className="text-clay-accent">Γÿà</span> AI-Powered Features
+  79 |           </Badge>
+  80 |           <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-clay-foreground mb-6 tracking-tight"> {
+  digest: '2441132166'
+}
+Γ¿» ReferenceError: Badge is not defined
+    at HowItWorks (components\sections\HowItWorks.tsx:44:12)
+  42 |       <div className="max-w-5xl mx-auto">
+  43 |         <div className="text-center mb-20">
+> 44 |           <Badge variant="purple" size="md" className="mb-6 bg-white/50">
+     |            ^
+  45 |             Simple 3-Step Process
+  46 |           </Badge>
+  47 |           <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-clay-foreground mb-6 tracking-tight"> {
+  digest: '4044063664'
+}
+ΓÜá Fast Refresh had to perform a full reload due to a runtime error.
+ΓÜá Fast Refresh had to perform a full reload due to a runtime error.
+Γ£ô Compiled in 1ms
+Γ¿» ReferenceError: Badge is not defined
+    at Features (components\sections\Features.tsx:77:12)
+  75 |         {/* Header */}
+  76 |         <div className="text-center mb-20">
+> 77 |           <Badge variant="outline" size="md" className="mb-6 bg-white/50">
+     |            ^
+  78 |             <span className="text-clay-accent">Γÿà</span> AI-Powered Features
+  79 |           </Badge>
+  80 |           <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-clay-foreground mb-6 tracking-tight"> {
+  digest: '2441132166'
+}
+Γ¿» ReferenceError: Badge is not defined
+    at HowItWorks (components\sections\HowItWorks.tsx:44:12)
+  42 |       <div className="max-w-5xl mx-auto">
+  43 |         <div className="text-center mb-20">
+> 44 |           <Badge variant="purple" size="md" className="mb-6 bg-white/50">
+     |            ^
+  45 |             Simple 3-Step Process
+  46 |           </Badge>
+  47 |           <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-clay-foreground mb-6 tracking-tight"> {
+  digest: '4044063664'
+}
+ GET /register 200 in 3.3s (compile: 193ms, render: 3.1s)
+ GET /register 200 in 403ms (compile: 150ms, render: 253ms)
+ GET / 500 in 8.6s (compile: 838ms, render: 7.7s)
+ GET / 500 in 3.3s (compile: 642ms, render: 2.6s)
+Γ£ô Compiled in 580ms
+ΓÜá Fast Refresh had to perform a full reload due to a runtime error.
+Γ¿» ReferenceError: Badge is not defined
+    at Features (components\sections\Features.tsx:77:12)
+  75 |         {/* Header */}
+  76 |         <div className="text-center mb-20">
+> 77 |           <Badge variant="outline" size="md" className="mb-6 bg-white/50">
+     |            ^
+  78 |             <span className="text-clay-accent">Γÿà</span> AI-Powered Features
+  79 |           </Badge>
+  80 |           <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-clay-foreground mb-6 tracking-tight"> {
+  digest: '2441132166'
+}
+Γ¿» ReferenceError: Badge is not defined
+    at HowItWorks (components\sections\HowItWorks.tsx:44:12)
+  42 |       <div className="max-w-5xl mx-auto">
+  43 |         <div className="text-center mb-20">
+> 44 |           <Badge variant="purple" size="md" className="mb-6 bg-white/50">
+     |            ^
+  45 |             Simple 3-Step Process
+  46 |           </Badge>
+  47 |           <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-clay-foreground mb-6 tracking-tight"> {
+  digest: '4044063664'
+}
+ΓÜá Fast Refresh had to perform a full reload due to a runtime error.
+Γ¿» ReferenceError: Badge is not defined
+    at Features (components\sections\Features.tsx:77:12)
+  75 |         {/* Header */}
+  76 |         <div className="text-center mb-20">
+> 77 |           <Badge variant="outline" size="md" className="mb-6 bg-white/50">
+     |            ^
+  78 |             <span className="text-clay-accent">Γÿà</span> AI-Powered Features
+  79 |           </Badge>
+  80 |           <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-clay-foreground mb-6 tracking-tight"> {
+  digest: '2441132166'
+}
+Γ¿» ReferenceError: Badge is not defined
+    at HowItWorks (components\sections\HowItWorks.tsx:44:12)
+  42 |       <div className="max-w-5xl mx-auto">
+  43 |         <div className="text-center mb-20">
+> 44 |           <Badge variant="purple" size="md" className="mb-6 bg-white/50">
+     |            ^
+  45 |             Simple 3-Step Process
+  46 |           </Badge>
+  47 |           <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-clay-foreground mb-6 tracking-tight"> {
+  digest: '4044063664'
+}
+ GET / 500 in 3.6s (compile: 503ms, render: 3.1s)
+ GET / 500 in 1855ms (compile: 112ms, render: 1744ms)
+Γ£ô Compiled in 382ms
+ΓÜá Fast Refresh had to perform a full reload due to a runtime error.
+Γ¿» ReferenceError: Badge is not defined
+    at Features (components\sections\Features.tsx:77:12)
+  75 |         {/* Header */}
+  76 |         <div className="text-center mb-20">
+> 77 |           <Badge variant="outline" size="md" className="mb-6 bg-white/50">
+     |            ^
+  78 |             <span className="text-clay-accent">Γÿà</span> AI-Powered Features
+  79 |           </Badge>
+  80 |           <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-clay-foreground mb-6 tracking-tight"> {
+  digest: '2441132166'
+}
+Γ¿» ReferenceError: Badge is not defined
+    at HowItWorks (components\sections\HowItWorks.tsx:44:12)
+  42 |       <div className="max-w-5xl mx-auto">
+  43 |         <div className="text-center mb-20">
+> 44 |           <Badge variant="purple" size="md" className="mb-6 bg-white/50">
+     |            ^
+  45 |             Simple 3-Step Process
+  46 |           </Badge>
+  47 |           <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-clay-foreground mb-6 tracking-tight"> {
+  digest: '4044063664'
+}
+ΓÜá Fast Refresh had to perform a full reload due to a runtime error.
+ΓÜá Fast Refresh had to perform a full reload due to a runtime error.
+Γ£ô Compiled in 5ms
+ΓÜá Fast Refresh had to perform a full reload due to a runtime error.
+Γ¿» ReferenceError: Badge is not defined
+    at Features (components\sections\Features.tsx:77:12)
+  75 |         {/* Header */}
+  76 |         <div className="text-center mb-20">
+> 77 |           <Badge variant="outline" size="md" className="mb-6 bg-white/50">
+     |            ^
+  78 |             <span className="text-clay-accent">Γÿà</span> AI-Powered Features
+  79 |           </Badge>
+  80 |           <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-clay-foreground mb-6 tracking-tight"> {
+  digest: '2441132166'
+}
+Γ¿» ReferenceError: Badge is not defined
+    at HowItWorks (components\sections\HowItWorks.tsx:44:12)
+  42 |       <div className="max-w-5xl mx-auto">
+  43 |         <div className="text-center mb-20">
+> 44 |           <Badge variant="purple" size="md" className="mb-6 bg-white/50">
+     |            ^
+  45 |             Simple 3-Step Process
+  46 |           </Badge>
+  47 |           <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-clay-foreground mb-6 tracking-tight"> {
+  digest: '4044063664'
+}
+ GET /register 200 in 438ms (compile: 51ms, render: 386ms)
+ GET / 500 in 7.7s (compile: 974ms, render: 6.7s)
+ GET / 500 in 4.1s (compile: 1114ms, render: 3.0s)
+ΓÜá Fast Refresh had to perform a full reload due to a runtime error.
+ΓÜá Fast Refresh had to perform a full reload due to a runtime error.
+Γ£ô Compiled in 184ms
+Γ¿» ReferenceError: Badge is not defined
+    at Features (components\sections\Features.tsx:77:12)
+  75 |         {/* Header */}
+  76 |         <div className="text-center mb-20">
+> 77 |           <Badge variant="outline" size="md" className="mb-6 bg-white/50">
+     |            ^
+  78 |             <span className="text-clay-accent">Γÿà</span> AI-Powered Features
+  79 |           </Badge>
+  80 |           <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-clay-foreground mb-6 tracking-tight"> {
+  digest: '2441132166'
+}
+Γ¿» ReferenceError: Badge is not defined
+    at HowItWorks (components\sections\HowItWorks.tsx:44:12)
+  42 |       <div className="max-w-5xl mx-auto">
+  43 |         <div className="text-center mb-20">
+> 44 |           <Badge variant="purple" size="md" className="mb-6 bg-white/50">
+     |            ^
+  45 |             Simple 3-Step Process
+  46 |           </Badge>
+  47 |           <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-clay-foreground mb-6 tracking-tight"> {
+  digest: '4044063664'
+}
+Γ¿» ReferenceError: Badge is not defined
+    at Features (components\sections\Features.tsx:77:12)
+  75 |         {/* Header */}
+  76 |         <div className="text-center mb-20">
+> 77 |           <Badge variant="outline" size="md" className="mb-6 bg-white/50">
+     |            ^
+  78 |             <span className="text-clay-accent">Γÿà</span> AI-Powered Features
+  79 |           </Badge>
+  80 |           <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-clay-foreground mb-6 tracking-tight"> {
+  digest: '2441132166'
+}
+Γ¿» ReferenceError: Badge is not defined
+    at HowItWorks (components\sections\HowItWorks.tsx:44:12)
+  42 |       <div className="max-w-5xl mx-auto">
+  43 |         <div className="text-center mb-20">
+> 44 |           <Badge variant="purple" size="md" className="mb-6 bg-white/50">
+     |            ^
+  45 |             Simple 3-Step Process
+  46 |           </Badge>
+  47 |           <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-clay-foreground mb-6 tracking-tight"> {
+  digest: '4044063664'
+}
+ GET / 500 in 3.3s (compile: 15ms, render: 3.3s)
+ GET / 500 in 2.8s (compile: 15ms, render: 2.8s)
+ΓÜá Fast Refresh had to perform a full reload due to a runtime error.
+Γ£ô Compiled in 267ms
+ΓÜá Fast Refresh had to perform a full reload due to a runtime error.
+Γ¿» ReferenceError: Badge is not defined
+    at Features (components\sections\Features.tsx:77:12)
+  75 |         {/* Header */}
+  76 |         <div className="text-center mb-20">
+> 77 |           <Badge variant="outline" size="md" className="mb-6 bg-white/50">
+     |            ^
+  78 |             <span className="text-clay-accent">Γÿà</span> AI-Powered Features
+  79 |           </Badge>
+  80 |           <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-clay-foreground mb-6 tracking-tight"> {
+  digest: '2441132166'
+}
+Γ¿» ReferenceError: Badge is not defined
+    at HowItWorks (components\sections\HowItWorks.tsx:44:12)
+  42 |       <div className="max-w-5xl mx-auto">
+  43 |         <div className="text-center mb-20">
+> 44 |           <Badge variant="purple" size="md" className="mb-6 bg-white/50">
+     |            ^
+  45 |             Simple 3-Step Process
+  46 |           </Badge>
+  47 |           <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-clay-foreground mb-6 tracking-tight"> {
+  digest: '4044063664'
+}
+Γ¿» ReferenceError: Badge is not defined
+    at Features (components\sections\Features.tsx:77:12)
+  75 |         {/* Header */}
+  76 |         <div className="text-center mb-20">
+> 77 |           <Badge variant="outline" size="md" className="mb-6 bg-white/50">
+     |            ^
+  78 |             <span className="text-clay-accent">Γÿà</span> AI-Powered Features
+  79 |           </Badge>
+  80 |           <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-clay-foreground mb-6 tracking-tight"> {
+  digest: '2441132166'
+}
+Γ¿» ReferenceError: Badge is not defined
+    at HowItWorks (components\sections\HowItWorks.tsx:44:12)
+  42 |       <div className="max-w-5xl mx-auto">
+  43 |         <div className="text-center mb-20">
+> 44 |           <Badge variant="purple" size="md" className="mb-6 bg-white/50">
+     |            ^
+  45 |             Simple 3-Step Process
+  46 |           </Badge>
+  47 |           <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-clay-foreground mb-6 tracking-tight"> {
+  digest: '4044063664'
+}
+ GET / 500 in 7.1s (compile: 36ms, render: 7.1s)
+ GET / 500 in 6.2s (compile: 50ms, render: 6.2s)
+Γ¿» ReferenceError: Badge is not defined
+    at Features (components\sections\Features.tsx:77:12)
+  75 |         {/* Header */}
+  76 |         <div className="text-center mb-20">
+> 77 |           <Badge variant="outline" size="md" className="mb-6 bg-white/50">
+     |            ^
+  78 |             <span className="text-clay-accent">Γÿà</span> AI-Powered Features
+  79 |           </Badge>
+  80 |           <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-clay-foreground mb-6 tracking-tight"> {
+  digest: '2441132166'
+}
+Γ¿» ReferenceError: Badge is not defined
+    at HowItWorks (components\sections\HowItWorks.tsx:44:12)
+  42 |       <div className="max-w-5xl mx-auto">
+  43 |         <div className="text-center mb-20">
+> 44 |           <Badge variant="purple" size="md" className="mb-6 bg-white/50">
+     |            ^
+  45 |             Simple 3-Step Process
+  46 |           </Badge>
+  47 |           <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-clay-foreground mb-6 tracking-tight"> {
+  digest: '4044063664'
+}
+Γùï Compiling /dashboard ...
+ GET /register 200 in 17.1s (compile: 8.0s, render: 9.1s)
+Γ¿» ReferenceError: Badge is not defined
+    at Features (components\sections\Features.tsx:77:12)
+  75 |         {/* Header */}
+  76 |         <div className="text-center mb-20">
+> 77 |           <Badge variant="outline" size="md" className="mb-6 bg-white/50">
+     |            ^
+  78 |             <span className="text-clay-accent">Γÿà</span> AI-Powered Features
+  79 |           </Badge>
+  80 |           <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-clay-foreground mb-6 tracking-tight"> {
+  digest: '2441132166'
+}
+Γ¿» ReferenceError: Badge is not defined
+    at HowItWorks (components\sections\HowItWorks.tsx:44:12)
+  42 |       <div className="max-w-5xl mx-auto">
+  43 |         <div className="text-center mb-20">
+> 44 |           <Badge variant="purple" size="md" className="mb-6 bg-white/50">
+     |            ^
+  45 |             Simple 3-Step Process
+  46 |           </Badge>
+  47 |           <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-clay-foreground mb-6 tracking-tight"> {
+  digest: '4044063664'
+}
+ GET /dashboard 200 in 25.1s (compile: 24.8s, render: 332ms)
+ GET / 200 in 30.8s (compile: 285ms, render: 30.5s)
+ GET / 500 in 4.8s (compile: 57ms, render: 4.8s)
+Γ¿» ReferenceError: Badge is not defined
+    at Features (components\sections\Features.tsx:77:12)
+  75 |         {/* Header */}
+  76 |         <div className="text-center mb-20">
+> 77 |           <Badge variant="outline" size="md" className="mb-6 bg-white/50">
+     |            ^
+  78 |             <span className="text-clay-accent">Γÿà</span> AI-Powered Features
+  79 |           </Badge>
+  80 |           <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-clay-foreground mb-6 tracking-tight"> {
+  digest: '2441132166'
+}
+Γ¿» ReferenceError: Badge is not defined
+    at HowItWorks (components\sections\HowItWorks.tsx:44:12)
+  42 |       <div className="max-w-5xl mx-auto">
+  43 |         <div className="text-center mb-20">
+> 44 |           <Badge variant="purple" size="md" className="mb-6 bg-white/50">
+     |            ^
+  45 |             Simple 3-Step Process
+  46 |           </Badge>
+  47 |           <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-clay-foreground mb-6 tracking-tight"> {
+  digest: '4044063664'
+}
+ GET / 500 in 1911ms (compile: 30ms, render: 1881ms)
+Γ£ô Compiled in 1231ms
+ΓÜá Fast Refresh had to perform a full reload due to a runtime error.
+Γ¿» ReferenceError: Badge is not defined
+    at Features (components\sections\Features.tsx:77:12)
+  75 |         {/* Header */}
+  76 |         <div className="text-center mb-20">
+> 77 |           <Badge variant="outline" size="md" className="mb-6 bg-white/50">
+     |            ^
+  78 |             <span className="text-clay-accent">Γÿà</span> AI-Powered Features
+  79 |           </Badge>
+  80 |           <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-clay-foreground mb-6 tracking-tight"> {
+  digest: '2441132166'
+}
+Γ¿» ReferenceError: Badge is not defined
+    at HowItWorks (components\sections\HowItWorks.tsx:44:12)
+  42 |       <div className="max-w-5xl mx-auto">
+  43 |         <div className="text-center mb-20">
+> 44 |           <Badge variant="purple" size="md" className="mb-6 bg-white/50">
+     |            ^
+  45 |             Simple 3-Step Process
+  46 |           </Badge>
+  47 |           <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-clay-foreground mb-6 tracking-tight"> {
+  digest: '4044063664'
+}
+ GET / 500 in 3.0s (compile: 32ms, render: 3.0s)

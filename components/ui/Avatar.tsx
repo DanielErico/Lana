@@ -40,12 +40,12 @@ function getInitials(name: string) {
 
 function getColorFromName(name: string) {
   const colors = [
-    "from-blue-500 to-blue-700",
-    "from-purple-500 to-purple-700",
-    "from-pink-500 to-rose-600",
-    "from-emerald-500 to-teal-600",
-    "from-amber-500 to-orange-600",
-    "from-cyan-500 to-blue-600",
+    "from-purple-400 to-purple-600",
+    "from-pink-400 to-pink-600",
+    "from-sky-400 to-sky-600",
+    "from-emerald-400 to-emerald-600",
+    "from-amber-400 to-amber-600",
+    "from-indigo-400 to-indigo-600",
   ];
   const idx = name.charCodeAt(0) % colors.length;
   return colors[idx];

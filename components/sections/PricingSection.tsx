@@ -65,77 +65,78 @@ const plans = [
 
 export default function PricingSection({ annual = false }: { annual?: boolean }) {
   return (
-    <section id="pricing" className="py-24 px-4 bg-surface-secondary">
+    <section id="pricing" className="py-24 px-4 relative z-10 bg-transparent">
       <div className="max-w-5xl mx-auto">
-        <div className="text-center mb-14">
-          <h2 className="font-heading text-4xl md:text-5xl font-black text-slate-900 mb-4">
+        <div className="text-center mb-20">
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-clay-foreground mb-6 tracking-tight">
             Simple, transparent{" "}
-            <span className="gradient-text">pricing</span>
+            <span className="clay-text-gradient">pricing</span>
           </h2>
-          <p className="text-lg text-slate-500">Start free. Scale as you grow. No hidden fees.</p>
+          <p className="text-lg md:text-xl text-clay-muted font-medium">Start free. Scale as you grow. No hidden fees.</p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-6 items-stretch">
+        <div className="grid md:grid-cols-3 gap-8 items-stretch pt-8">
           {plans.map((plan) => (
             <div
               key={plan.name}
               className={`
-                relative rounded-2xl p-6 flex flex-col
+                relative rounded-[40px] p-8 flex flex-col transition-all duration-300
                 ${plan.highlight
-                  ? "bg-gradient-to-br from-blue-700 to-purple-700 text-white shadow-2xl scale-105"
-                  : "bg-white border border-slate-200 shadow-card text-slate-900"
+                  ? "bg-gradient-to-b from-clay-accent to-purple-600 text-white shadow-clayDeep scale-105 z-10 hover:scale-110"
+                  : "bg-white/80 backdrop-blur-xl border border-white shadow-clayCard text-clay-foreground hover:-translate-y-2 hover:shadow-clayCardHover"
                 }
               `}
             >
               {plan.badge && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                  <Badge variant="warning" className="px-3 py-1 text-xs font-bold shadow-md">
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 animate-clay-breathe">
+                  <Badge variant="warning" size="md" className="shadow-md">
                     {plan.badge}
                   </Badge>
                 </div>
               )}
 
-              <div className="mb-6">
-                <h3 className={`font-heading font-bold text-xl mb-1 ${plan.highlight ? "text-white" : "text-slate-900"}`}>
+              <div className="mb-8">
+                <h3 className={`font-black text-2xl mb-2 tracking-tight ${plan.highlight ? "text-white" : "text-clay-foreground"}`}>
                   {plan.name}
                 </h3>
-                <p className={`text-sm mb-4 ${plan.highlight ? "text-blue-100" : "text-slate-500"}`}>
+                <p className={`text-sm font-medium h-10 ${plan.highlight ? "text-white/80" : "text-clay-muted"}`}>
                   {plan.desc}
                 </p>
-                <div className="flex items-end gap-1">
-                  <span className={`font-heading font-black text-5xl ${plan.highlight ? "text-white" : "text-slate-900"}`}>
+                <div className="flex items-end gap-1 mt-6">
+                  <span className={`font-black text-5xl tracking-tighter ${plan.highlight ? "text-white" : "text-clay-foreground"}`}>
                     ${annual ? plan.price.annual : plan.price.monthly}
                   </span>
                   {plan.price.monthly > 0 && (
-                    <span className={`text-sm mb-2 ${plan.highlight ? "text-blue-200" : "text-slate-400"}`}>
+                    <span className={`text-base font-bold pb-1 ${plan.highlight ? "text-white/60" : "text-clay-muted/60"}`}>
                       /mo
                     </span>
                   )}
                 </div>
                 {annual && plan.price.monthly > 0 && (
-                  <p className={`text-xs mt-1 ${plan.highlight ? "text-blue-200" : "text-slate-400"}`}>
+                  <p className={`text-xs font-bold mt-2 tracking-wide uppercase ${plan.highlight ? "text-white/60" : "text-clay-accent"}`}>
                     Billed annually (save 20%)
                   </p>
                 )}
               </div>
 
-              <ul className="space-y-2.5 flex-1 mb-8">
+              <ul className="space-y-4 flex-1 mb-8">
                 {plan.features.map((f) => (
-                  <li key={f} className="flex items-center gap-2.5 text-sm">
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className={plan.highlight ? "text-green-300" : "text-blue-600"}>
-                      <circle cx="8" cy="8" r="8" fill="currentColor" opacity="0.15"/>
-                      <path d="M5 8l2 2 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                    <span className={plan.highlight ? "text-blue-50" : "text-slate-600"}>{f}</span>
+                  <li key={f} className="flex items-center gap-3 text-sm font-medium">
+                    <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${plan.highlight ? 'bg-white/20' : 'bg-emerald-100'}`}>
+                      <svg width="12" height="12" viewBox="0 0 16 16" fill="none" className={plan.highlight ? "text-white" : "text-emerald-600"}>
+                        <path d="M5 8l2 2 4-4" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    </div>
+                    <span className={plan.highlight ? "text-white/90" : "text-clay-foreground"}>{f}</span>
                   </li>
                 ))}
               </ul>
 
-              <Link href={plan.href}>
+              <Link href={plan.href} className="w-full mt-auto">
                 <Button
                   variant={plan.highlight ? "secondary" : plan.ctaVariant}
-                  size="lg"
-                  className={`w-full ${plan.highlight ? "bg-white text-blue-700 hover:bg-blue-50 font-bold" : ""}`}
+                  size="xl"
+                  className={`w-full ${plan.highlight ? "bg-white text-clay-accent shadow-clayButton hover:bg-slate-50 font-black" : "font-black"}`}
                 >
                   {plan.cta}
                 </Button>

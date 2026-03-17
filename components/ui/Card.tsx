@@ -7,17 +7,17 @@ interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const variantClasses: Record<string, string> = {
-  default: "bg-white border border-slate-200 shadow-card",
-  glass: "glass-card",
-  gradient: "bg-gradient-to-br from-white to-slate-50 border border-slate-200 shadow-card",
-  bordered: "bg-white border-2 border-blue-100",
+  default: "bg-clay-cardBg backdrop-blur-xl shadow-clayCard border border-white/40",
+  glass: "bg-white/40 backdrop-blur-2xl shadow-clayCard border border-white/60",
+  gradient: "bg-gradient-to-br from-white/90 to-white/60 backdrop-blur-xl shadow-clayCard border border-white/50",
+  bordered: "bg-clay-cardBg/50 backdrop-blur-xl border-4 border-white/60 shadow-clayCard",
 };
 
 const paddingClasses: Record<string, string> = {
   none: "",
-  sm: "p-4",
-  md: "p-6",
-  lg: "p-8",
+  sm: "p-6",
+  md: "p-8",
+  lg: "p-10",
 };
 
 export default function Card({
@@ -31,15 +31,17 @@ export default function Card({
   return (
     <div
       className={`
-        rounded-2xl
+        relative overflow-hidden rounded-4xl
         ${variantClasses[variant]}
         ${paddingClasses[padding]}
-        ${hover ? "cursor-pointer transition-all duration-200 hover:shadow-card-hover hover:-translate-y-0.5" : ""}
+        ${hover ? "cursor-pointer transition-all duration-500 ease-out hover:-translate-y-2 hover:shadow-clayCardHover" : "transition-shadow duration-500"}
         ${className}
       `}
       {...props}
     >
-      {children}
+      <div className="relative z-10 flex h-full flex-col">
+        {children}
+      </div>
     </div>
   );
 }

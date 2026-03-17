@@ -22,18 +22,18 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
   const inputId = id || label?.toLowerCase().replace(/\s+/g, "-");
 
   return (
-    <div className="flex flex-col gap-1.5">
+    <div className="flex flex-col gap-2">
       {label && (
         <label
           htmlFor={inputId}
-          className="text-sm font-medium text-slate-700"
+          className="text-sm font-bold text-clay-foreground ml-1"
         >
           {label}
         </label>
       )}
       <div className="relative">
         {leftIcon && (
-          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+          <div className="absolute left-4 top-1/2 -translate-y-1/2 text-clay-muted z-10">
             {leftIcon}
           </div>
         )}
@@ -41,27 +41,27 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
           ref={ref}
           id={inputId}
           className={`
-            w-full px-3.5 py-2.5 text-sm rounded-xl
-            bg-white border transition-all duration-200
-            placeholder:text-slate-400 text-slate-900
-            focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent
-            disabled:bg-slate-50 disabled:cursor-not-allowed disabled:text-slate-400
+            w-full h-16 px-5 py-4 text-base rounded-[20px]
+            bg-[#EFEBF5] border-0 transition-all duration-300 ease-out shadow-clayPressed
+            placeholder:text-clay-muted text-clay-foreground font-medium
+            focus:bg-white focus:outline-none focus:ring-4 focus:ring-clay-accent/20 focus:shadow-[0_8px_16px_rgba(139,92,246,0.1)]
+            disabled:bg-clay-canvas disabled:cursor-not-allowed disabled:text-clay-muted disabled:shadow-none
             ${error
-              ? "border-red-400 focus:ring-red-400"
-              : "border-slate-200 hover:border-slate-300"}
-            ${leftIcon ? "pl-10" : ""}
-            ${rightIcon ? "pr-10" : ""}
+              ? "ring-2 ring-red-400 focus:ring-red-400"
+              : ""}
+            ${leftIcon ? "pl-12" : ""}
+            ${rightIcon ? "pr-12" : ""}
             ${className}
           `}
           {...props}
         />
         {rightIcon && (
-          <div className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
+          <div className="absolute right-4 top-1/2 -translate-y-1/2 text-clay-muted z-10">
             {rightIcon}
           </div>
         )}
       </div>
-      {error && <p className="text-xs text-red-500 flex items-center gap-1">{error}</p>}
+      {error && <p className="text-sm font-bold text-red-500 flex items-center gap-1.5 ml-1">{error}</p>}
       {hint && !error && <p className="text-xs text-slate-500">{hint}</p>}
     </div>
   );

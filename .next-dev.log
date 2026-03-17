@@ -1,0 +1,39 @@
+
+> lana@0.1.0 dev
+> next dev
+
+ΓÜá Warning: Next.js inferred your workspace root, but it may not be correct.
+ We detected multiple lockfiles and selected the directory of C:\Users\DANNY\package-lock.json as the root directory.
+ To silence this warning, set `turbopack.root` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#root-directory for more information.
+ Detected additional lockfiles: 
+   * C:\Users\DANNY\.gemini\antigravity\scratch\lana\package-lock.json
+
+Γû▓ Next.js 16.1.7 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.1.139:3000
+
+Γ£ô Starting...
+Attention: Next.js now collects completely anonymous telemetry regarding usage.
+This information is used to shape Next.js' roadmap and prioritize features.
+You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
+https://nextjs.org/telemetry
+
+Γ£ô Ready in 4.1s
+Γùï Compiling / ...
+ GET / 200 in 23.0s (compile: 15.9s, render: 7.1s)
+ GET / 200 in 1418ms (compile: 24ms, render: 1394ms)
+ GET /register 200 in 3.2s (compile: 3.1s, render: 172ms)
+Γ£ô Compiled in 4s
+Γ£ô Compiled in 2.8s
+ GET / 200 in 1290ms (compile: 106ms, render: 1184ms)
+ GET / 200 in 911ms (compile: 13ms, render: 897ms)
+ GET / 200 in 13.1s (compile: 405ms, render: 12.7s)
+ GET /register 200 in 127ms (compile: 26ms, render: 101ms)
+ GET /register 200 in 116ms (compile: 16ms, render: 100ms)
+ GET /register 200 in 91ms (compile: 14ms, render: 77ms)
+Γùï Compiling /dashboard ...
+ GET /dashboard 200 in 7.7s (compile: 7.3s, render: 448ms)
+ GET /editor 200 in 1756ms (compile: 1593ms, render: 163ms)
+ GET /editor 200 in 156ms (compile: 41ms, render: 115ms)
+ GET /brand 200 in 1481ms (compile: 1325ms, render: 155ms)

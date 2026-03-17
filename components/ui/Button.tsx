@@ -11,24 +11,24 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variantClasses: Record<string, string> = {
   primary:
-    "bg-blue-700 hover:bg-blue-800 text-white shadow-sm hover:shadow-md",
+    "bg-gradient-to-br from-[#A78BFA] to-clay-accent text-white shadow-clayButton hover:-translate-y-1 hover:shadow-clayButtonHover active:scale-[0.92] active:shadow-clayPressed active:translate-y-0",
   gradient:
-    "bg-gradient-to-r from-blue-700 to-purple-700 hover:from-blue-800 hover:to-purple-800 text-white shadow-sm hover:shadow-lg",
+    "bg-gradient-to-br from-[#A78BFA] to-clay-accent text-white shadow-clayButton hover:-translate-y-1 hover:shadow-clayButtonHover active:scale-[0.92] active:shadow-clayPressed active:translate-y-0",
   secondary:
-    "bg-surface-secondary hover:bg-surface-tertiary text-text-primary border border-surface-border",
+    "bg-white text-clay-foreground shadow-clayButton hover:-translate-y-1 hover:shadow-clayButtonHover active:scale-[0.92] active:shadow-clayPressed active:translate-y-0",
   outline:
-    "border-2 border-blue-700 text-blue-700 hover:bg-blue-50",
+    "border-2 border-clay-accent/30 bg-white/50 backdrop-blur-sm text-clay-accent shadow-clayButton hover:-translate-y-1 hover:border-clay-accent hover:shadow-clayButtonHover active:scale-[0.92] active:shadow-clayPressed active:translate-y-0",
   ghost:
-    "text-text-secondary hover:bg-surface-tertiary hover:text-text-primary",
+    "text-clay-foreground hover:bg-clay-accent/10 hover:text-clay-accent active:scale-[0.92]",
   destructive:
-    "bg-red-500 hover:bg-red-600 text-white shadow-sm",
+    "bg-gradient-to-br from-red-400 to-red-600 text-white shadow-clayButton hover:-translate-y-1 hover:shadow-clayButtonHover active:scale-[0.92] active:shadow-clayPressed active:translate-y-0",
 };
 
 const sizeClasses: Record<string, string> = {
-  sm: "px-3 py-1.5 text-sm rounded-lg gap-1.5",
-  md: "px-4 py-2 text-sm rounded-xl gap-2",
-  lg: "px-6 py-2.5 text-base rounded-xl gap-2",
-  xl: "px-8 py-3.5 text-base rounded-2xl gap-2.5",
+  sm: "h-11 px-4 text-sm rounded-2xl gap-2",
+  md: "h-14 px-6 text-base rounded-[20px] gap-2.5",
+  lg: "h-16 px-8 text-lg rounded-[24px] gap-3",
+  xl: "h-20 px-10 text-xl font-extrabold rounded-[32px] gap-4",
 };
 
 export default function Button({
@@ -45,10 +45,10 @@ export default function Button({
   return (
     <button
       className={`
-        inline-flex items-center justify-center font-medium
-        transition-all duration-200 cursor-pointer select-none
-        disabled:opacity-50 disabled:cursor-not-allowed
-        focus-visible:outline-2 focus-visible:outline-blue-700 focus-visible:outline-offset-2
+        inline-flex items-center justify-center font-bold tracking-wide
+        transition-all duration-300 ease-out cursor-pointer select-none
+        disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:active:scale-100 disabled:shadow-none
+        focus-visible:outline-2 focus-visible:outline-clay-accent focus-visible:outline-offset-2
         ${variantClasses[variant]}
         ${sizeClasses[size]}
         ${className}

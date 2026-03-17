@@ -29,54 +29,54 @@ const logos = ["Acme Corp", "TechFlow", "Pixel Co", "Botaniq", "Luminary", "Nexu
 
 export default function Testimonials() {
   return (
-    <section className="py-24 px-4 bg-white">
+    <section className="py-24 px-4 relative z-10 bg-transparent">
       <div className="max-w-6xl mx-auto">
         {/* Social proof logos */}
-        <div className="text-center mb-16">
-          <p className="text-sm font-medium text-slate-400 mb-8 uppercase tracking-widest">Trusted by teams at</p>
-          <div className="flex flex-wrap items-center justify-center gap-8 opacity-40">
+        <div className="text-center mb-20">
+          <p className="text-sm font-bold text-clay-muted mb-8 uppercase tracking-[0.2em]">Trusted by teams at</p>
+          <div className="flex flex-wrap items-center justify-center gap-10 opacity-60 mix-blend-multiply">
             {logos.map((logo) => (
-              <span key={logo} className="font-heading font-black text-slate-900 text-xl tracking-tight">{logo}</span>
+              <span key={logo} className="font-heading font-black text-clay-foreground text-2xl tracking-tight">{logo}</span>
             ))}
           </div>
         </div>
 
         {/* Heading */}
-        <div className="text-center mb-12">
-          <h2 className="font-heading text-4xl md:text-5xl font-black text-slate-900 mb-4">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-clay-foreground mb-6 tracking-tight">
             Real brands.{" "}
-            <span className="gradient-text">Real results.</span>
+            <span className="clay-text-gradient">Real results.</span>
           </h2>
-          <p className="text-lg text-slate-500">Join 10,000+ brands growing on Instagram with Lana.</p>
+          <p className="text-lg md:text-xl text-clay-muted font-medium">Join 10,000+ brands growing on Instagram with Lana.</p>
         </div>
 
         {/* Cards */}
-        <div className="grid md:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-3 gap-8">
           {testimonials.map((t) => (
             <div
               key={t.name}
-              className="bg-white border border-slate-100 rounded-2xl p-6 shadow-card hover:shadow-card-hover transition-all duration-200 hover:-translate-y-0.5 cursor-default"
+              className="bg-white/80 backdrop-blur-xl border border-white rounded-[32px] p-8 shadow-clayCard hover:shadow-clayCardHover transition-all duration-300 hover:-translate-y-2 cursor-default group"
             >
               {/* Stars */}
-              <div className="flex gap-1 mb-4">
+              <div className="flex gap-1.5 mb-6">
                 {Array.from({ length: t.rating }).map((_, i) => (
-                  <svg key={i} width="14" height="14" viewBox="0 0 14 14" fill="#F59E0B">
+                  <svg key={i} width="18" height="18" viewBox="0 0 14 14" fill="#F59E0B" className="drop-shadow-sm group-hover:scale-110 transition-transform" style={{ transitionDelay: `${i * 50}ms` }}>
                     <path d="M7 1L8.5 5.5H13L9.5 8L11 12.5L7 10L3 12.5L4.5 8L1 5.5H5.5L7 1Z"/>
                   </svg>
                 ))}
               </div>
 
               {/* Quote */}
-              <p className="text-slate-600 text-sm leading-relaxed mb-6">&ldquo;{t.quote}&rdquo;</p>
+              <p className="text-clay-foreground text-base leading-relaxed font-medium mb-8">&ldquo;{t.quote}&rdquo;</p>
 
               {/* Author */}
-              <div className="flex items-center gap-3">
-                <div className={`w-10 h-10 rounded-full bg-gradient-to-br ${t.color} flex items-center justify-center text-white text-xs font-bold flex-shrink-0`}>
+              <div className="flex items-center gap-4 mt-auto">
+                <div className={`w-12 h-12 rounded-[16px] bg-gradient-to-br ${t.color} flex items-center justify-center text-white text-sm font-black flex-shrink-0 shadow-sm`}>
                   {t.initials}
                 </div>
                 <div>
-                  <div className="font-semibold text-slate-900 text-sm">{t.name}</div>
-                  <div className="text-xs text-slate-400">{t.role}</div>
+                  <div className="font-black text-clay-foreground text-base">{t.name}</div>
+                  <div className="text-xs font-bold text-clay-muted uppercase tracking-wider mt-0.5">{t.role}</div>
                 </div>
               </div>
             </div>
