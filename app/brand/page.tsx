@@ -41,7 +41,7 @@ export default function BrandPage() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto animate-fade-in">
+    <div className="max-w-2xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 lg:py-12 animate-fade-in relative z-10">
       <div className="mb-8">
         <h1 className="font-heading font-black text-2xl text-slate-900">Brand Setup Wizard</h1>
         <p className="text-slate-500 text-sm mt-0.5">Set up your brand identity in 5 steps</p>

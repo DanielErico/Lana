@@ -2,6 +2,7 @@
 import Card from "@/components/ui/Card";
 import Badge from "@/components/ui/Badge";
 import Link from "next/link";
+import { useUser } from "@/components/providers/UserProvider";
 
 const stats = [
   {
@@ -76,12 +77,15 @@ const topPosts = [
 ];
 
 export default function DashboardPage() {
+  const { user } = useUser();
+  const firstName = user?.name ? user.name.split(' ')[0] : 'Alex';
+
   return (
-    <div className="space-y-8 animate-fade-in relative z-10">
+    <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 lg:py-12 space-y-8 animate-fade-in relative z-10">
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="font-black text-4xl text-clay-foreground tracking-tight mb-2 drop-shadow-sm">Good morning, Alex 👋</h1>
+          <h1 className="font-black text-4xl text-clay-foreground tracking-tight mb-2 drop-shadow-sm">Good morning, {firstName} 👋</h1>
           <p className="text-clay-muted font-bold text-base tracking-wide">Here&apos;s what&apos;s happening with your Instagram today.</p>
         </div>
         <Link href="/editor">

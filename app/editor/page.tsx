@@ -1,11 +1,11 @@
 "use client";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import Card from "@/components/ui/Card";
 import Badge from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
 
 import { RimberioSlideData, RimberioBrand } from '@/components/templates/rimberio/schema';
-import RimberioSlide from '@/components/templates/rimberio/RimberioSlide';
+import SlidePreview from '@/components/templates/rimberio/SlidePreview';
 import { useBrand } from '@/components/providers/BrandProvider';
 import { useRouter } from 'next/navigation';
 
@@ -21,56 +21,54 @@ const defaultBrand: RimberioBrand = {
 
 const initialSlides: RimberioSlideData[] = [
   {
-    type: "intro_card",
-    theme: "primary",
     id: "1",
-    topLeftText: "Need help?",
-    topRightText: "Drop us a DM",
-    cardHeading: "Ready to Try It?",
-    cardSubheading: "Start simple. Create 3-5 slides, focus on value, and post consistently.",
-    searchPlaceholder: "Need help? Drop us a DM",
-    cardFooter: "we'd love to help you get started."
-  },
-  {
-    type: "text_left",
-    theme: "light",
-    id: "2",
-    heading: "Here's Why Posting Carousels Can Boost Your Content Game",
-    highlightWord: "Boost",
-    body: "If you're not using carousels yet... you might be missing out.",
-    badgeText: "Swipe to learn",
-    footerLeft: "Rimberio",
-    footerRight: "2040"
-  },
-  {
-    type: "list_center",
+    slideNum: 1,
+    layout: "intro_card",
     theme: "primary",
-    id: "3",
-    heading: "Carousels Keep People on Your Post Longer",
-    body: "Each swipe means more time spent on your content and the algorithm loves that.",
-    listItems: [
-      { icon: "clock", textLeft: "more time =", textRight: "more reach" },
-      { icon: "check", textLeft: "=", textRight: "more results" }
-    ]
+    headline: "Ready to Try It?",
+    body: "Start simple. Create 3-5 slides, focus on value, and post consistently.",
+    cta: "Need help? Drop us a DM",
+    hasImage: false
   },
   {
-    type: "text_center",
-    theme: "dark",
-    id: "4",
-    heading: "Break Down Ideas, Slide by Slide",
-    body: "Carousels are perfect for sharing tips, steps, or stories without cluttering one single image.\n\nYou keep it clean and clear.",
-    highlightText: "clean and clear.",
-    nextPageText: "next page"
-  },
-  {
-    type: "cta_save",
+    id: "2",
+    slideNum: 2,
+    layout: "text_left",
     theme: "light",
+    headline: "Here's Why Posting Carousels Can Boost Your Content Game",
+    body: "If you're not using carousels yet... you might be missing out.",
+    cta: "Swipe to learn",
+    hasImage: false
+  },
+  {
+    id: "3",
+    slideNum: 3,
+    layout: "list_center",
+    theme: "primary",
+    headline: "Carousels Keep People on Your Post Longer",
+    body: "Each swipe means more time spent on your content and the algorithm loves that.",
+    cta: "",
+    hasImage: false
+  },
+  {
+    id: "4",
+    slideNum: 4,
+    layout: "text_center",
+    theme: "dark",
+    headline: "Break Down Ideas, Slide by Slide",
+    body: "Carousels are perfect for sharing tips, steps, or stories without cluttering one single image.\n\nYou keep it clean and clear.",
+    cta: "",
+    hasImage: false
+  },
+  {
     id: "5",
-    heading: "People Love to Save Carousels",
-    highlightWord: "Love",
-    bodyTop: "Carousel posts tend to get more saves, which tells the platform:",
-    badgeText: "“This content is valuable”",
-    bodyBottom: "That's how you build trust, visibility, and authority over time."
+    slideNum: 5,
+    layout: "cta_save",
+    theme: "light",
+    headline: "People Love to Save Carousels",
+    body: "Carousel posts tend to get more saves, which tells the platform:\nThat's how you build trust, visibility, and authority over time.",
+    cta: "Save for Later",
+    hasImage: false
   }
 ];
 
@@ -84,12 +82,26 @@ export default function EditorPage() {
   const [generatingAI, setGeneratingAI] = useState<string | null>(null);
   const [scheduleOpen, setScheduleOpen] = useState(false);
 
+  // ResizeObserver custom hook for dynamic canvas scaling
+  const viewportRef = useRef<HTMLDivElement>(null);
+  const [canvasScale, setCanvasScale] = useState(1);
+  const THUMBNAIL_SCALE = 0.13; // Thumbnails get fixed static scale in JS wrapper
+
+  useEffect(() => {
+    if (!viewportRef.current) return;
+    const observer = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        setCanvasScale(entry.contentRect.width / 1080);
+      }
+    });
+    observer.observe(viewportRef.current);
+    return () => observer.disconnect();
+  }, []);
+
   const currentSlide = slides[activeSlide];
 
-  const updateSlide = (updates: Partial<any>) => {
-    const newSlides = [...slides];
-    newSlides[activeSlide] = { ...newSlides[activeSlide], ...updates };
-    setSlides(newSlides);
+  const updateSlide = (field: keyof RimberioSlideData, value: any) => {
+    setSlides(prev => prev.map((s, i) => i === activeSlide ? { ...s, [field]: value } : s));
   };
 
   const genAI = async (type: string) => {
@@ -102,7 +114,7 @@ export default function EditorPage() {
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-80px)] -mx-8 relative z-10 font-sans animate-fade-in bg-transparent">
+    <div className="flex flex-col h-screen w-full relative z-10 font-sans animate-fade-in bg-transparent overflow-hidden">
       {/* Top toolbar */}
       <div className="h-16 bg-white/60 backdrop-blur-xl border-b border-white shadow-sm flex items-center justify-between px-6 flex-shrink-0 z-20 relative">
           <div className="flex items-center gap-4">
@@ -120,17 +132,30 @@ export default function EditorPage() {
         </div>
       </div>
 
-      <div className="flex flex-1 overflow-hidden relative min-h-0">
+      <div className="flex-1 flex flex-col lg:grid lg:grid-cols-[250px_1fr_300px] overflow-hidden relative min-h-0">
         {/* Left: Slide list */}
-        <div className="w-[180px] lg:w-48 flex-shrink-0 bg-white/40 backdrop-blur-md border-r border-white shadow-sm overflow-y-auto p-4 space-y-3 z-10 relative">
+        <div className="w-full lg:w-[250px] flex-shrink-0 lg:flex-shrink bg-white/40 backdrop-blur-md border-b lg:border-b-0 lg:border-r border-white shadow-sm overflow-x-auto lg:overflow-x-hidden lg:overflow-y-auto p-4 flex lg:flex-col gap-3 z-10 relative">
           {slides.map((slide, i) => (
             <div
               key={slide.id}
               onClick={() => setActiveSlide(i)}
-              className={`relative rounded-[20px] overflow-hidden aspect-square cursor-pointer transition-all shadow-sm flex items-center justify-center bg-white ${i === activeSlide ? "ring-4 ring-clay-accent shadow-clayCard scale-105" : "hover:ring-4 hover:ring-white/80 hover:shadow-clayCardHover"}`}
+              className={`relative rounded-[20px] overflow-hidden aspect-square cursor-pointer transition-all shadow-sm flex items-center justify-center bg-white shrink-0 ${i === activeSlide ? "ring-4 ring-clay-accent shadow-clayCard scale-105" : "hover:ring-4 hover:ring-white/80 hover:shadow-clayCardHover"}`}
+              style={{ width: 100, height: 100 }}
             >
-              <RimberioSlide slide={slide} brand={brand} scale={0.13} />
-              <div className="absolute inset-0 p-2 flex flex-col justify-between pointer-events-none">
+              <div 
+                className="absolute top-0 left-0"
+                style={{
+                  width: 1080,
+                  height: 1080,
+                  transformOrigin: 'top left',
+                  transform: `scale(${100 / 1080})` // Scale directly to 100px thumbnail based on the wrapper size
+                }}
+              >
+                <div style={{ width: 1080, height: 1080 }}>
+                  <SlidePreview slide={slide} brand={brand} />
+                </div>
+              </div>
+              <div className="absolute inset-0 p-2 flex flex-col justify-between pointer-events-none z-20">
                 <span className="w-5 h-5 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center text-white text-[10px] font-black shadow-sm">{i + 1}</span>
               </div>
             </div>
@@ -138,13 +163,15 @@ export default function EditorPage() {
           <button
             onClick={() => setSlides([...slides, { 
               id: Date.now().toString(), 
-              type: "text_center", 
+              slideNum: slides.length + 1,
+              layout: "text_center", 
               theme: "light",
-              heading: "New Slide",
+              headline: "New Slide",
               body: "Double click to edit text",
-              nextPageText: "next"
+              cta: "Next",
+              hasImage: false
             }])}
-            className="w-full aspect-square rounded-[20px] bg-white/50 border-2 border-dashed border-white hover:border-clay-accent hover:bg-white hover:shadow-clayCard flex items-center justify-center cursor-pointer transition-all group"
+            className="w-[100px] lg:w-full shrink-0 aspect-square rounded-[20px] bg-white/50 border-2 border-dashed border-white hover:border-clay-accent hover:bg-white hover:shadow-clayCard flex items-center justify-center cursor-pointer transition-all group"
           >
             <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24" className="text-clay-muted group-hover:text-clay-accent transition-colors group-hover:scale-110">
               <path d="M12 5v14M5 12h14" strokeLinecap="round"/>
@@ -153,9 +180,9 @@ export default function EditorPage() {
         </div>
 
         {/* Center: Canvas */}
-        <div className="flex-1 bg-transparent flex items-center justify-center p-8 overflow-hidden relative min-w-0">
+        <div className="flex-1 flex items-center justify-center p-4 lg:p-8 overflow-hidden relative min-w-0 h-full">
           <div className="relative flex flex-col items-center justify-center h-full w-full">
-            <div className="absolute top-4 left-1/2 -translate-x-1/2 flex items-center gap-4 bg-white/60 backdrop-blur-xl border border-white px-4 py-2 rounded-full shadow-clayButton z-10">
+            <div className="absolute top-4 left-1/2 -translate-x-1/2 flex items-center gap-4 bg-white/60 backdrop-blur-xl border border-white px-4 py-2 rounded-full shadow-clayButton z-20">
               <button onClick={() => setActiveSlide(Math.max(0, activeSlide - 1))} disabled={activeSlide === 0} className="w-8 h-8 rounded-full bg-white text-clay-muted border border-white flex items-center justify-center cursor-pointer hover:bg-white/80 hover:text-clay-foreground hover:shadow-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed">
                 <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6" strokeLinecap="round"/></svg>
               </button>
@@ -167,17 +194,31 @@ export default function EditorPage() {
             
             {/* Scaled Canvas Wrapper */}
             <div className="flex-1 w-full flex items-center justify-center mt-16 min-h-0">
-              <div className="w-[320px] h-[320px] md:w-[480px] md:h-[480px] shrink-0 rounded-[40px] shadow-clayDeep flex items-center justify-center relative overflow-hidden transition-all duration-500 bg-white ring-4 ring-white/50">
-                <div className="flex items-center justify-center w-full h-full scale-[0.3] md:scale-[0.444] transform-gpu">
-                  <RimberioSlide slide={currentSlide} brand={brand} scale={1} />
+              <div 
+                ref={viewportRef}
+                className="canvas-viewport w-full max-w-[600px] aspect-square shrink-0 rounded-[40px] shadow-clayDeep relative overflow-hidden transition-all duration-50 bg-white ring-4 ring-white/50"
+              >
+                <div 
+                  className="canvas-scale absolute top-0 left-0"
+                  style={{ 
+                    width: 1080,
+                    height: 1080,
+                    transformOrigin: 'top left',
+                    transform: `scale(${canvasScale})` 
+                  }}
+                >
+                  <div className="canvas-inner" style={{ width: 1080, height: 1080 }}>
+                    <SlidePreview slide={currentSlide} brand={brand} />
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
+
         {/* Right: Control panel */}
-        <div className="w-[320px] lg:w-80 flex-shrink-0 min-w-[320px] bg-white/40 backdrop-blur-md border-l border-white shadow-sm overflow-y-auto flex flex-col z-10 relative">
+        <div className="w-full lg:w-[300px] flex-shrink-0 min-w-[300px] lg:h-full bg-white/40 backdrop-blur-md border-t lg:border-t-0 lg:border-l border-white shadow-sm overflow-y-auto flex flex-col z-10 relative max-h-[40vh] lg:max-h-full">
           <div className="flex border-b border-white/40 p-2 gap-2">
             {["template","design","content","brand"].map(tab => (
               <button key={tab} onClick={() => setActiveTab(tab)} className={`flex-1 py-2.5 rounded-[16px] text-xs font-black capitalize cursor-pointer transition-all ${activeTab === tab ? "bg-white text-clay-accent shadow-clayPressed" : "text-clay-muted hover:text-clay-foreground hover:bg-white/60"}`}>{tab}</button>
@@ -222,7 +263,7 @@ export default function EditorPage() {
                 </div>
                 <div>
                   <p className="text-sm font-black text-clay-muted mb-4 uppercase tracking-widest">Slide Type</p>
-                  <p className="text-xs font-bold text-clay-foreground bg-white/60 p-3 rounded-[14px] border border-white capitalize">{currentSlide.type.replace('_', ' ')}</p>
+                  <p className="text-xs font-bold text-clay-foreground bg-white/60 p-3 rounded-[14px] border border-white capitalize">{currentSlide.layout.replace('_', ' ')}</p>
                 </div>
               </div>
             )}
@@ -231,76 +272,32 @@ export default function EditorPage() {
               <div className="space-y-4">
                 <p className="text-sm font-black text-clay-muted mb-4 uppercase tracking-widest">Edit Text Fields</p>
                 
-                {/* Dynamically render inputs based on schema type */}
-                {currentSlide.type === 'intro_card' && (
-                  <>
-                     <div className="flex gap-2">
-                        <div className="flex-1"><label className="text-[10px] font-black uppercase text-clay-muted mb-1 block">Top Left</label><input className="w-full bg-white/60 border border-white p-2 rounded-xl text-xs font-bold" value={(currentSlide as any).topLeftText} onChange={e => updateSlide({topLeftText: e.target.value})} /></div>
-                        <div className="flex-1"><label className="text-[10px] font-black uppercase text-clay-muted mb-1 block">Top Right</label><input className="w-full bg-white/60 border border-white p-2 rounded-xl text-xs font-bold" value={(currentSlide as any).topRightText} onChange={e => updateSlide({topRightText: e.target.value})} /></div>
-                     </div>
-                     <div><label className="text-[10px] font-black uppercase text-clay-muted mb-1 block">Card Heading</label><textarea className="w-full bg-white/60 border border-white p-2 rounded-xl text-xs font-bold leading-relaxed resize-none h-20" value={(currentSlide as any).cardHeading} onChange={e => updateSlide({cardHeading: e.target.value})} /></div>
-                     <div><label className="text-[10px] font-black uppercase text-clay-muted mb-1 block">Card Subheading</label><textarea className="w-full bg-white/60 border border-white p-2 rounded-xl text-xs font-bold leading-relaxed resize-none h-20" value={(currentSlide as any).cardSubheading} onChange={e => updateSlide({cardSubheading: e.target.value})} /></div>
-                     <div><label className="text-[10px] font-black uppercase text-clay-muted mb-1 block">Search Placeholder</label><input className="w-full bg-white/60 border border-white p-2 rounded-xl text-xs font-bold" value={(currentSlide as any).searchPlaceholder} onChange={e => updateSlide({searchPlaceholder: e.target.value})} /></div>
-                     <div><label className="text-[10px] font-black uppercase text-clay-muted mb-1 block">Card Footer</label><input className="w-full bg-white/60 border border-white p-2 rounded-xl text-xs font-bold" value={(currentSlide as any).cardFooter} onChange={e => updateSlide({cardFooter: e.target.value})} /></div>
-                  </>
-                )}
+                <div>
+                  <label className="text-[10px] font-black uppercase text-clay-muted mb-1 block">Headline</label>
+                  <textarea 
+                    className="w-full bg-white/60 border border-white p-2 rounded-xl text-xs font-bold leading-relaxed resize-none h-24" 
+                    value={currentSlide.headline} 
+                    onChange={e => updateSlide('headline', e.target.value)} 
+                  />
+                </div>
+                
+                <div>
+                  <label className="text-[10px] font-black uppercase text-clay-muted mb-1 block">Body Text</label>
+                  <textarea 
+                    className="w-full bg-white/60 border border-white p-2 rounded-xl text-xs font-bold leading-relaxed resize-none h-32" 
+                    value={currentSlide.body} 
+                    onChange={e => updateSlide('body', e.target.value)} 
+                  />
+                </div>
 
-                {currentSlide.type === 'text_left' && (
-                  <>
-                     <div><label className="text-[10px] font-black uppercase text-clay-muted mb-1 block">Heading</label><textarea className="w-full bg-white/60 border border-white p-2 rounded-xl text-xs font-bold leading-relaxed resize-none h-24" value={(currentSlide as any).heading} onChange={e => updateSlide({heading: e.target.value})} /></div>
-                     <div><label className="text-[10px] font-black uppercase text-clay-muted mb-1 block">Highlight Word</label><input className="w-full bg-white/60 border border-white p-2 rounded-xl text-xs font-bold" value={(currentSlide as any).highlightWord || ''} onChange={e => updateSlide({highlightWord: e.target.value})} /></div>
-                     <div><label className="text-[10px] font-black uppercase text-clay-muted mb-1 block">Body Text</label><textarea className="w-full bg-white/60 border border-white p-2 rounded-xl text-xs font-bold leading-relaxed resize-none h-24" value={(currentSlide as any).body} onChange={e => updateSlide({body: e.target.value})} /></div>
-                     <div><label className="text-[10px] font-black uppercase text-clay-muted mb-1 block">Badge Text</label><input className="w-full bg-white/60 border border-white p-2 rounded-xl text-xs font-bold" value={(currentSlide as any).badgeText} onChange={e => updateSlide({badgeText: e.target.value})} /></div>
-                     <div className="flex gap-2">
-                        <div className="flex-1"><label className="text-[10px] font-black uppercase text-clay-muted mb-1 block">Footer L</label><input className="w-full bg-white/60 border border-white p-2 rounded-xl text-xs font-bold" value={(currentSlide as any).footerLeft} onChange={e => updateSlide({footerLeft: e.target.value})} /></div>
-                        <div className="flex-1"><label className="text-[10px] font-black uppercase text-clay-muted mb-1 block">Footer R</label><input className="w-full bg-white/60 border border-white p-2 rounded-xl text-xs font-bold" value={(currentSlide as any).footerRight} onChange={e => updateSlide({footerRight: e.target.value})} /></div>
-                     </div>
-                  </>
-                )}
-
-                {currentSlide.type === 'list_center' && (
-                  <>
-                     <div><label className="text-[10px] font-black uppercase text-clay-muted mb-1 block">Heading</label><textarea className="w-full bg-white/60 border border-white p-2 rounded-xl text-xs font-bold leading-relaxed resize-none h-20" value={(currentSlide as any).heading} onChange={e => updateSlide({heading: e.target.value})} /></div>
-                     <div><label className="text-[10px] font-black uppercase text-clay-muted mb-1 block">Body Text</label><textarea className="w-full bg-white/60 border border-white p-2 rounded-xl text-xs font-bold leading-relaxed resize-none h-20" value={(currentSlide as any).body} onChange={e => updateSlide({body: e.target.value})} /></div>
-                     
-                     <p className="text-[10px] font-black uppercase text-clay-muted mt-4">List Items</p>
-                     {((currentSlide as any).listItems || []).map((item: any, idx: number) => (
-                        <div key={idx} className="flex gap-2 p-3 bg-white/30 rounded-xl border border-white/50">
-                          <div className="flex-1">
-                             <input className="w-full bg-white/80 border-transparent p-1.5 rounded-lg text-[10px] font-bold mb-2 placeholder-clay-muted" placeholder="Left text..." value={item.textLeft} onChange={e => {
-                               const newItems = [...(currentSlide as any).listItems];
-                               newItems[idx].textLeft = e.target.value;
-                               updateSlide({listItems: newItems});
-                             }} />
-                             <input className="w-full bg-white/80 border-transparent p-1.5 rounded-lg text-[10px] font-bold placeholder-clay-muted" placeholder="Right text..." value={item.textRight} onChange={e => {
-                               const newItems = [...(currentSlide as any).listItems];
-                               newItems[idx].textRight = e.target.value;
-                               updateSlide({listItems: newItems});
-                             }} />
-                          </div>
-                        </div>
-                     ))}
-                  </>
-                )}
-
-                {currentSlide.type === 'text_center' && (
-                  <>
-                     <div><label className="text-[10px] font-black uppercase text-clay-muted mb-1 block">Heading</label><textarea className="w-full bg-white/60 border border-white p-2 rounded-xl text-xs font-bold leading-relaxed resize-none h-24" value={(currentSlide as any).heading} onChange={e => updateSlide({heading: e.target.value})} /></div>
-                     <div><label className="text-[10px] font-black uppercase text-clay-muted mb-1 block">Body Text</label><textarea className="w-full bg-white/60 border border-white p-2 rounded-xl text-xs font-bold leading-relaxed resize-none h-32" value={(currentSlide as any).body} onChange={e => updateSlide({body: e.target.value})} /></div>
-                     <div><label className="text-[10px] font-black uppercase text-clay-muted mb-1 block">Highlight Phrase</label><input className="w-full bg-white/60 border border-white p-2 rounded-xl text-xs font-bold" value={(currentSlide as any).highlightText || ''} onChange={e => updateSlide({highlightText: e.target.value})} /></div>
-                     <div><label className="text-[10px] font-black uppercase text-clay-muted mb-1 block">Next Page CTA</label><input className="w-full bg-white/60 border border-white p-2 rounded-xl text-xs font-bold" value={(currentSlide as any).nextPageText || ''} onChange={e => updateSlide({nextPageText: e.target.value})} /></div>
-                  </>
-                )}
-
-                {currentSlide.type === 'cta_save' && (
-                  <>
-                     <div><label className="text-[10px] font-black uppercase text-clay-muted mb-1 block">Heading</label><textarea className="w-full bg-white/60 border border-white p-2 rounded-xl text-xs font-bold leading-relaxed resize-none h-24" value={(currentSlide as any).heading} onChange={e => updateSlide({heading: e.target.value})} /></div>
-                     <div><label className="text-[10px] font-black uppercase text-clay-muted mb-1 block">Highlight Word</label><input className="w-full bg-white/60 border border-white p-2 rounded-xl text-xs font-bold" value={(currentSlide as any).highlightWord || ''} onChange={e => updateSlide({highlightWord: e.target.value})} /></div>
-                     <div><label className="text-[10px] font-black uppercase text-clay-muted mb-1 block">Body Top</label><textarea className="w-full bg-white/60 border border-white p-2 rounded-xl text-xs font-bold leading-relaxed resize-none h-20" value={(currentSlide as any).bodyTop} onChange={e => updateSlide({bodyTop: e.target.value})} /></div>
-                     <div><label className="text-[10px] font-black uppercase text-clay-muted mb-1 block">Badge Text</label><input className="w-full bg-white/60 border border-white p-2 rounded-xl text-xs font-bold" value={(currentSlide as any).badgeText} onChange={e => updateSlide({badgeText: e.target.value})} /></div>
-                     <div><label className="text-[10px] font-black uppercase text-clay-muted mb-1 block">Body Bottom</label><textarea className="w-full bg-white/60 border border-white p-2 rounded-xl text-xs font-bold leading-relaxed resize-none h-20" value={(currentSlide as any).bodyBottom} onChange={e => updateSlide({bodyBottom: e.target.value})} /></div>
-                  </>
-                )}
+                <div>
+                  <label className="text-[10px] font-black uppercase text-clay-muted mb-1 block">Call to Action (CTA)</label>
+                  <input 
+                    className="w-full bg-white/60 border border-white p-2 rounded-xl text-xs font-bold" 
+                    value={currentSlide.cta} 
+                    onChange={e => updateSlide('cta', e.target.value)} 
+                  />
+                </div>
               </div>
             )}
             

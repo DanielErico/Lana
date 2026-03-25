@@ -17,6 +17,15 @@ const nunito = Nunito({
   variable: "--font-nunito",
 });
 
+import type { Viewport } from "next";
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+};
+
 export const metadata: Metadata = {
   title: "Lana — AI Instagram Carousel Platform",
   description: "Automatically plan, design, schedule and publish Instagram carousel posts using AI while maintaining strong brand identity.",
@@ -35,7 +44,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${dmSans.variable} ${nunito.variable}`}>
-      <body className={`font-sans antialiased bg-clay-canvas text-clay-foreground min-h-screen relative overflow-x-hidden`}>
+      <body className={`font-sans antialiased bg-clay-canvas text-clay-foreground min-h-screen w-full max-w-[100vw] relative overflow-x-hidden`}>
         <BackgroundBlobs />
         <UserProvider>
           <BrandProvider>

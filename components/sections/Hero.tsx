@@ -2,12 +2,6 @@ import Link from "next/link";
 import Button from "@/components/ui/Button";
 import Badge from "@/components/ui/Badge";
 
-const stats = [
-  { value: "10,000+", label: "Brands Trust Lana" },
-  { value: "2.4M+", label: "Posts Scheduled" },
-  { value: "340%", label: "Avg. Engagement Increase" },
-];
-
 export default function Hero() {
   return (
     <section className="min-h-[90vh] flex flex-col items-center justify-center pt-32 pb-16 px-4 relative">
@@ -54,16 +48,6 @@ export default function Hero() {
               Watch Demo
             </Button>
           </Link>
-        </div>
-
-        {/* Stats strip */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-8 sm:gap-16 mb-16">
-          {stats.map((s) => (
-            <div key={s.label} className="text-center group">
-              <div className="text-4xl sm:text-5xl font-black clay-text-gradient cursor-default animate-clay-breathe inline-block">{s.value}</div>
-              <div className="text-sm font-bold text-clay-muted mt-2 tracking-wide uppercase">{s.label}</div>
-            </div>
-          ))}
         </div>
 
         {/* Dashboard mockup */}

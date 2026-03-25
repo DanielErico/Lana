@@ -1,4 +1,5 @@
 export type RimberioTheme = "primary" | "light" | "dark";
+export type SlideLayout = "intro_card" | "text_left" | "list_center" | "text_center" | "cta_save";
 
 export interface RimberioBrand {
   colors: {
@@ -12,59 +13,16 @@ export interface RimberioBrand {
   };
 }
 
-export type SlideType = 'intro_card' | 'text_left' | 'list_center' | 'text_center' | 'cta_save';
-
-export interface BaseSlide {
+export interface RimberioSlideData {
   id: string;
-  type: SlideType;
+  headline: string;
+  body: string;
+  cta: string;
+  hasImage: boolean;
+  slideNum: number;
   theme: RimberioTheme;
+  layout: SlideLayout;
 }
-
-export interface IntroCardSlide extends BaseSlide {
-  type: 'intro_card';
-  topLeftText: string;
-  topRightText: string;
-  cardHeading: string;
-  cardSubheading: string;
-  searchPlaceholder: string;
-  cardFooter: string;
-}
-
-export interface TextLeftSlide extends BaseSlide {
-  type: 'text_left';
-  heading: string;
-  highlightWord: string;
-  body: string;
-  badgeText: string;
-  footerLeft: string;
-  footerRight: string;
-}
-
-export interface ListCenterSlide extends BaseSlide {
-  type: 'list_center';
-  heading: string;
-  body: string;
-  listItems: Array<{ icon: "clock" | "chart" | "check"; textLeft: string; textRight: string }>;
-}
-
-export interface TextCenterSlide extends BaseSlide {
-  type: 'text_center';
-  heading: string;
-  body: string;
-  highlightText?: string;
-  nextPageText: string;
-}
-
-export interface CTASaveSlide extends BaseSlide {
-  type: 'cta_save';
-  heading: string;
-  highlightWord: string;
-  bodyTop: string;
-  badgeText: string;
-  bodyBottom: string;
-}
-
-export type RimberioSlideData = IntroCardSlide | TextLeftSlide | ListCenterSlide | TextCenterSlide | CTASaveSlide;
 
 export interface RimberioTemplateData {
   id: string;

@@ -48,7 +48,7 @@ export default function CalendarPage() {
   const daysInMonth = 31;
 
   return (
-    <div className="space-y-8 animate-fade-in">
+    <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 lg:py-12 space-y-8 animate-fade-in relative z-10">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
