@@ -3,20 +3,34 @@ import { useState } from "react";
 import Link from "next/link";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
+import { createClientBrowser } from "@/utils/supabase/client";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [show2FA, setShow2FA] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    await new Promise(r => setTimeout(r, 1500));
-    setLoading(false);
-    setShow2FA(true);
+    setError(null);
+
+    const supabase = createClientBrowser();
+    const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (authError) {
+      setError(authError.message);
+      setLoading(false);
+      return;
+    }
+
+    // Success, redirect to dashboard
+    window.location.href = "/dashboard";
   };
 
   return (
@@ -36,7 +50,6 @@ export default function LoginPage() {
         </div>
 
         <div className="bg-white/80 backdrop-blur-2xl rounded-[40px] border border-white shadow-clayDeep p-10">
-          {!show2FA ? (
             <>
               <h1 className="font-black text-3xl text-clay-foreground mb-2 tracking-tight">Welcome back</h1>
               <p className="text-clay-muted text-base font-medium mb-8">Sign in to your Lana account</p>
@@ -117,6 +130,8 @@ export default function LoginPage() {
                   </Link>
                 </div>
 
+                {error && <p className="text-red-500 text-sm font-bold mt-2 p-3 bg-red-50 rounded-xl">{error}</p>}
+
                 <Button type="submit" variant="primary" size="xl" className="w-full mt-4 font-black shadow-clayButton text-lg" loading={loading}>
                   Sign In
                 </Button>
@@ -128,47 +143,13 @@ export default function LoginPage() {
                   Sign up free
                 </Link>
               </p>
+              <p className="text-center text-sm font-bold text-clay-muted mt-8">
+                Don&apos;t have an account?{" "}
+                <Link href="/register" className="text-clay-accent font-black hover:text-indigo-500 hover:underline cursor-pointer">
+                  Sign up free
+                </Link>
+              </p>
             </>
-          ) : (
-            <>
-              <div className="w-16 h-16 rounded-[20px] bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center mb-6 mx-auto shadow-clayButton">
-                <svg width="28" height="28" fill="none" stroke="white" strokeWidth="2.5" viewBox="0 0 24 24">
-                  <rect x="5" y="11" width="14" height="10" rx="3"/>
-                  <path d="M8 11V7a4 4 0 018 0v4" strokeLinecap="round"/>
-                </svg>
-              </div>
-              <h2 className="font-black text-3xl tracking-tight text-clay-foreground mb-2 text-center">Two-Factor Auth</h2>
-              <p className="text-clay-muted text-base font-medium text-center mb-10">Enter the 6-digit code from your authenticator app</p>
-
-              <div className="flex justify-center gap-3 mb-10">
-                {Array.from({ length: 6 }).map((_, i) => (
-                  <input
-                    key={i}
-                    type="text"
-                    maxLength={1}
-                    className="w-12 h-14 text-center text-2xl font-black bg-white/50 border border-white rounded-[20px] shadow-clayPressed focus:shadow-clayCard focus:bg-white focus:outline-none transition-all text-clay-foreground"
-                    id={`otp-${i}`}
-                    onChange={e => {
-                      if (e.target.value && i < 5) {
-                        const next = document.getElementById(`otp-${i+1}`) as HTMLInputElement;
-                        next?.focus();
-                      }
-                    }}
-                  />
-                ))}
-              </div>
-
-              <Button variant="primary" size="xl" className="w-full font-black shadow-clayButton text-lg" onClick={() => window.location.href = "/dashboard"}>
-                Verify & Sign In
-              </Button>
-              <button
-                className="w-full text-center text-sm font-bold text-clay-accent mt-6 hover:text-indigo-500 hover:underline cursor-pointer"
-                onClick={() => setShow2FA(false)}
-              >
-                Back to sign in
-              </button>
-            </>
-          )}
         </div>
 
         {/* Security badge */}

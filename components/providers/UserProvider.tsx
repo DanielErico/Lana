@@ -59,7 +59,8 @@ export function UserProvider({ children }: { children: ReactNode }) {
     setUserState(newUserData);
     const supabase = createClientBrowser();
     const { data: { session } } = await supabase.auth.getSession();
-    const userId = session?.user?.id || '00000000-0000-0000-0000-000000000000';
+    const userId = session?.user?.id;
+    if (!userId) return; // Don't save to DB if logged out
     
     await (supabase.from('profiles') as any).upsert({ 
       id: userId, 

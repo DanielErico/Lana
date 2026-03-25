@@ -3,6 +3,7 @@ import { useState } from "react";
 import Link from "next/link";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
+import { createClientBrowser } from "@/utils/supabase/client";
 
 const roles = [
   { id: "business_owner", label: "Business Owner", icon: "🏢" },
@@ -15,6 +16,8 @@ export default function RegisterPage() {
   const [role, setRole] = useState("");
   const [form, setForm] = useState({ name: "", email: "", password: "", confirm: "" });
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [otp, setOtp] = useState(Array(6).fill(""));
 
   const handleOtp = (val: string, idx: number) => {
@@ -29,10 +32,51 @@ export default function RegisterPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (form.password !== form.confirm) {
+      setError("Passwords do not match");
+      return;
+    }
     setLoading(true);
-    await new Promise(r => setTimeout(r, 1500));
+    setError(null);
+    
+    const supabase = createClientBrowser();
+    const { data: authData, error: authError } = await supabase.auth.signUp({
+      email: form.email,
+      password: form.password,
+    });
+
+    if (authError) {
+      setError(authError.message);
+      setLoading(false);
+      return;
+    }
+
+    if (authData.user) {
+      // Create their initial profile
+      const roleLabel = roles.find(r => r.id === role)?.label || "Business Owner";
+      await (supabase.from('profiles') as any).upsert({
+        id: authData.user.id,
+        name: form.name,
+        email: form.email,
+        role: roleLabel,
+        plan: "Free Plan", // Default
+      });
+      
+      // Also init an empty brand so it exists
+      await (supabase.from('brands') as any).upsert({
+        user_id: authData.user.id,
+        colors: { primary: "#FE4B17", light: "#F4F5F6", dark: "#0A0A0A" },
+        logo: { text: form.name }
+      });
+    }
+
     setLoading(false);
-    setStep(3);
+    // If auto-confirm is enabled, they are logged in. Otherwise, they need to verify email.
+    if (authData.session) {
+      window.location.href = "/dashboard";
+    } else {
+      setStep(3); // Show check email verification
+    }
   };
 
   return (
@@ -183,6 +227,8 @@ export default function RegisterPage() {
                     <Link href="#" className="text-clay-accent hover:text-indigo-500 hover:underline">Privacy Policy</Link>
                   </span>
                 </label>
+
+                {error && <p className="text-red-500 text-sm font-bold mt-2 p-3 bg-red-50 rounded-xl">{error}</p>}
 
                 <Button type="submit" variant="primary" size="xl" className="w-full mt-4 font-black shadow-clayButton text-lg" loading={loading}>
                   Create Account
