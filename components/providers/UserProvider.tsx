@@ -1,5 +1,6 @@
 "use client";
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { createClientBrowser } from "@/utils/supabase/client";
 
 export interface UserData {
   name: string;
@@ -12,7 +13,8 @@ export interface UserData {
 
 interface UserContextType {
   user: UserData;
-  setUser: React.Dispatch<React.SetStateAction<UserData>>;
+  setUser: (userData: UserData) => Promise<void>;
+  isLoaded: boolean;
 }
 
 const defaultUser: UserData = {
@@ -27,10 +29,45 @@ const defaultUser: UserData = {
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export function UserProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<UserData>(defaultUser);
+  const [user, setUserState] = useState<UserData>(defaultUser);
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  useEffect(() => {
+    async function initUser() {
+      const supabase = createClientBrowser();
+      const { data: { session } } = await supabase.auth.getSession();
+      const userId = session?.user?.id || '00000000-0000-0000-0000-000000000000';
+      
+      const { data } = await supabase.from('profiles').select('*').eq('id', userId).single();
+      if (data) {
+        setUserState({
+          name: data.name || defaultUser.name,
+          email: data.email || defaultUser.email,
+          company: data.company || defaultUser.company,
+          timezone: data.timezone || defaultUser.timezone,
+          role: data.role || defaultUser.role,
+          plan: data.plan || defaultUser.plan
+        });
+      }
+      setIsLoaded(true);
+    }
+    initUser();
+  }, []);
+
+  const setUser = async (newUserData: UserData) => {
+    setUserState(newUserData);
+    const supabase = createClientBrowser();
+    const { data: { session } } = await supabase.auth.getSession();
+    const userId = session?.user?.id || '00000000-0000-0000-0000-000000000000';
+    
+    await supabase.from('profiles').upsert({ 
+      id: userId, 
+      ...newUserData 
+    });
+  };
 
   return (
-    <UserContext.Provider value={{ user, setUser }}>
+    <UserContext.Provider value={{ user, setUser, isLoaded }}>
       {children}
     </UserContext.Provider>
   );
