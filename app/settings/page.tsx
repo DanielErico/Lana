@@ -6,8 +6,10 @@ import Badge from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
 import Avatar from "@/components/ui/Avatar";
 import { useUser, UserData } from "@/components/providers/UserProvider";
+import { useBrand } from "@/components/providers/BrandProvider";
+import { createClientBrowser } from "@/utils/supabase/client";
 
-const tabs = ["Profile","Instagram","Security","Team","Billing","Activity"];
+const tabs = ["Profile", "Brand", "Instagram", "Security", "Team", "Billing", "Activity"];
 
 const activityLog = [
   { action: "Logged in", ip: "192.168.1.1", device: "Chrome · Windows", time: "2 min ago", type: "login" },
@@ -27,17 +29,45 @@ const teamMembers = [
 export default function SettingsPage() {
   const router = useRouter();
   const { user, setUser } = useUser();
+  const { brand, setBrand } = useBrand();
   const [localUser, setLocalUser] = useState<UserData>(user);
+  const [localBrand, setLocalBrand] = useState({ name: brand.logo?.text || '', website: brand.website || '' });
   const [activeTab, setActiveTab] = useState("Profile");
   const [saving, setSaving] = useState(false);
+  const [brandSaving, setBrandSaving] = useState(false);
+  const [brandSaved, setBrandSaved] = useState(false);
   const [show2FASetup, setShow2FASetup] = useState(false);
   const [instagramConnected, setInstagramConnected] = useState(false);
 
   const handleSave = async () => {
     setSaving(true);
-    await new Promise(r => setTimeout(r, 1200));
-    setUser(localUser);
+    await setUser(localUser);
     setSaving(false);
+  };
+
+  const handleBrandSave = async () => {
+    setBrandSaving(true);
+    setBrandSaved(false);
+    await setBrand({
+      ...brand,
+      logo: { ...brand.logo, text: localBrand.name },
+      website: localBrand.website || undefined,
+    });
+    // Also update the profile role/name if changed
+    const supabase = createClientBrowser();
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session?.user?.id) {
+      await (supabase.from('profiles') as any).upsert({
+        id: session.user.id,
+        name: localUser.name,
+        email: localUser.email,
+        role: localUser.role,
+        company: localUser.company,
+      });
+    }
+    setBrandSaving(false);
+    setBrandSaved(true);
+    setTimeout(() => setBrandSaved(false), 3000);
   };
 
   return (
@@ -89,7 +119,54 @@ export default function SettingsPage() {
               </div>
             ))}
           </div>
-          <Button variant="primary" size="lg" loading={saving} onClick={handleSave} className="shadow-clayButton font-black">Save Changes</Button>
+          <Button variant="primary" size="lg" loading={saving} onClick={handleSave} className="shadow-clayButton font-black">Save Profile</Button>
+        </div>
+      )}
+
+      {/* Brand */}
+      {activeTab === "Brand" && (
+        <div className="bg-white/70 backdrop-blur-xl rounded-[40px] border border-white shadow-clayCard p-10 space-y-8">
+          <div>
+            <h3 className="font-black text-2xl text-clay-foreground tracking-tight">Brand Identity</h3>
+            <p className="text-clay-muted font-bold text-sm mt-1 uppercase tracking-widest">These details power your AI-generated content</p>
+          </div>
+          <div className="space-y-5">
+            <div>
+              <label className="text-[10px] font-black text-clay-muted block mb-2 uppercase tracking-widest px-1">Brand Name</label>
+              <input
+                value={localBrand.name}
+                onChange={e => setLocalBrand(b => ({...b, name: e.target.value}))}
+                placeholder="e.g. TechFlow"
+                className="w-full px-5 py-4 rounded-[20px] bg-white/50 border border-white shadow-clayPressed text-sm font-bold text-clay-foreground focus:outline-none focus:bg-white focus:shadow-sm hover:bg-white/80 transition-all"
+              />
+            </div>
+            <div>
+              <label className="text-[10px] font-black text-clay-muted block mb-2 uppercase tracking-widest px-1">
+                Website URL <span className="text-indigo-400 normal-case">(optional — AI reads this for brand context)</span>
+              </label>
+              <input
+                value={localBrand.website}
+                onChange={e => setLocalBrand(b => ({...b, website: e.target.value}))}
+                placeholder="https://yourwebsite.com"
+                type="url"
+                className="w-full px-5 py-4 rounded-[20px] bg-white/50 border border-white shadow-clayPressed text-sm font-bold text-clay-foreground focus:outline-none focus:bg-white focus:shadow-sm hover:bg-white/80 transition-all"
+              />
+              <p className="text-xs text-clay-muted mt-2 px-1">Gemini will scrape your site to learn your products, voice, and audience before generating carousel slides.</p>
+            </div>
+            <div>
+              <label className="text-[10px] font-black text-clay-muted block mb-2 uppercase tracking-widest px-1">Your Role (used in AI tone)</label>
+              <input
+                value={localUser.role}
+                onChange={e => setLocalUser(u => ({...u, role: e.target.value}))}
+                placeholder="e.g. Business Owner, Social Media Manager"
+                className="w-full px-5 py-4 rounded-[20px] bg-white/50 border border-white shadow-clayPressed text-sm font-bold text-clay-foreground focus:outline-none focus:bg-white focus:shadow-sm hover:bg-white/80 transition-all"
+              />
+            </div>
+          </div>
+          <div className="flex items-center gap-4">
+            <Button variant="primary" size="lg" loading={brandSaving} onClick={handleBrandSave} className="shadow-clayButton font-black">Save Brand Details</Button>
+            {brandSaved && <span className="text-emerald-500 font-black text-sm">✓ Saved! AI will use these on next generation.</span>}
+          </div>
         </div>
       )}
 
