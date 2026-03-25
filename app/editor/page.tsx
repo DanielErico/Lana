@@ -1,5 +1,6 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import Card from "@/components/ui/Card";
 import Badge from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
@@ -73,13 +74,34 @@ const initialSlides: RimberioSlideData[] = [
 ];
 
 export default function EditorPage() {
+  const searchParams = useSearchParams();
+  const postId = searchParams.get('postId');
+
   const [slides, setSlides] = useState<RimberioSlideData[]>(initialSlides);
+  const [loadingPost, setLoadingPost] = useState(!!postId);
+  const [postTitle, setPostTitle] = useState<string | null>(null);
   const [activeSlide, setActiveSlide] = useState(0);
   const [activeTab, setActiveTab] = useState("template");
   const [caption, setCaption] = useState("");
   const { brand } = useBrand();
   const router = useRouter();
   const [generatingAI, setGeneratingAI] = useState<string | null>(null);
+
+  // Load slides from the post if postId is provided in URL
+  useEffect(() => {
+    if (!postId) return;
+    fetch(`/api/posts?postId=${postId}`)
+      .then(r => r.json())
+      .then(data => {
+        if (data.post?.slides?.length) {
+          setSlides(data.post.slides);
+          setPostTitle(data.post.title);
+          setActiveSlide(0);
+        }
+      })
+      .catch(console.error)
+      .finally(() => setLoadingPost(false));
+  }, [postId]);
   const [scheduleOpen, setScheduleOpen] = useState(false);
 
   // ResizeObserver custom hook for dynamic canvas scaling
@@ -122,8 +144,10 @@ export default function EditorPage() {
               <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6" strokeLinecap="round" strokeLinejoin="round"/></svg>
             </button>
             <div className="flex items-center gap-3">
-              <h1 className="font-black text-clay-foreground text-lg tracking-wide uppercase drop-shadow-sm">Carousel Editor</h1>
-              <Badge variant="warning" size="sm" className="shadow-sm">v2.0</Badge>
+              <h1 className="font-black text-clay-foreground text-lg tracking-wide uppercase drop-shadow-sm">
+                {loadingPost ? "Loading..." : (postTitle || "Carousel Editor")}
+              </h1>
+              {!postTitle && <Badge variant="warning" size="sm" className="shadow-sm">v2.0</Badge>}
             </div>
           </div>
         <div className="flex items-center gap-3">

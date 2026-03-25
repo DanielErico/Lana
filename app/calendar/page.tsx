@@ -509,7 +509,8 @@ export default function CalendarPage() {
               </span>
               <button 
                 onClick={() => {
-                  alert('Integration to send to Editor goes here!');
+                  setPreviewPost(null);
+                  router.push(`/editor?postId=${previewPost.id}`);
                 }}
                 className="bg-clay-accent text-white px-6 py-3 rounded-2xl font-black tracking-wide shadow-clayButton hover:-translate-y-0.5 transition-transform"
               >
