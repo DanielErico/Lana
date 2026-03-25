@@ -44,6 +44,7 @@ export default function CalendarPage() {
   const [selectedDates, setSelectedDates] = useState<number[]>([]);
   const [generating, setGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [debugContext, setDebugContext] = useState<any>(null);
 
   const fetchPosts = useCallback(async () => {
     setLoading(true);
@@ -85,6 +86,11 @@ export default function CalendarPage() {
       });
       const json = await res.json();
       if (!res.ok) throw new Error(json.error);
+      
+      if (json.debugContext) {
+        setDebugContext(json.debugContext);
+      }
+      
       await fetchPosts();
       setStep('done');
     } catch (err: any) {
@@ -431,13 +437,23 @@ export default function CalendarPage() {
 
             {/* Step: Done */}
             {step === 'done' && (
-              <div className="flex flex-col items-center justify-center py-8 gap-6">
+              <div className="flex flex-col items-center justify-center py-8 gap-6 w-full max-w-lg mx-auto">
                 <div className="w-20 h-20 rounded-[24px] bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center shadow-clayButton">
                   <svg width="36" height="36" fill="none" stroke="white" strokeWidth="3" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" strokeLinecap="round" strokeLinejoin="round"/></svg>
                 </div>
                 <div className="text-center">
                   <h2 className="font-black text-2xl text-clay-foreground tracking-tight mb-2">Plans Generated! 🎉</h2>
                   <p className="text-sm font-bold text-clay-muted uppercase tracking-widest mb-6">Your calendar is updated</p>
+                  
+                  {debugContext && (
+                    <div className="text-left bg-slate-50 p-4 rounded-xl border border-slate-200 w-full mb-6">
+                      <p className="text-xs font-black text-slate-500 uppercase mb-2">AI Context Received:</p>
+                      <pre className="text-[10px] text-slate-700 whitespace-pre-wrap font-mono overflow-auto max-h-32">
+                        {JSON.stringify(debugContext, null, 2)}
+                      </pre>
+                    </div>
+                  )}
+
                   <button
                     onClick={() => setShowModal(false)}
                     className="px-8 py-3 rounded-[20px] bg-clay-accent text-white font-black text-sm cursor-pointer hover:shadow-clayButton transition-all"

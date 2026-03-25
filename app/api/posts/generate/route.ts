@@ -34,9 +34,16 @@ export async function POST(request: NextRequest) {
     // --- Website scraping: fetch and extract text if a website URL is saved ---
     let websiteContent = '';
     const websiteUrl = brand?.website;
+    let scrapeError = null;
+    let finalUrl = websiteUrl;
+
     if (websiteUrl) {
       try {
-        const res = await fetch(websiteUrl, {
+        if (!finalUrl.startsWith('http')) {
+          finalUrl = 'https://' + finalUrl;
+        }
+        
+        const res = await fetch(finalUrl, {
           headers: { 'User-Agent': 'Mozilla/5.0 (compatible; LanaBrandBot/1.0)' },
           signal: AbortSignal.timeout(6000),
         });
@@ -50,8 +57,10 @@ export async function POST(request: NextRequest) {
           .trim()
           .slice(0, 3000);
         if (text.length > 100) websiteContent = text;
-      } catch {
-        // Website unavailable — silently continue without it
+      } catch (err: any) {
+        // Website unavailable — silently continue without it but log reason internally
+        scrapeError = err.message;
+        console.error('Scrape error:', finalUrl, err.message);
       }
     }
     // -------------------------------------------------------------------------
@@ -84,10 +93,10 @@ ${websiteContent}
 ${dateModeInstruction}
 
 CRITICAL INSTRUCTIONS FOR SLIDE CONTENT:
-1. You MUST explicitly mention the BRAND NAME (${brand?.logo?.text || profile?.company || 'Brand'}) in the slides where natural.
+1. YOU ARE WRITING FOR THIS EXACT BRAND: "${brand?.logo?.text || profile?.company || 'Brand'}". You MUST explicitly mention this Brand Name in the slides, especially the intro and CTA.
 2. The content must sound like it is written by a ${profile?.role || 'professional'} speaking directly to their target audience.
-3. WEAVE the brand's specific services, products, or values into stories and CTAs. Do NOT use generic placeholder text.
-4. If website content was provided above, derive specific topics, pain points, and solutions from it.
+3. WEAVE specific services, features, products, or values into stories and CTAs. Do NOT use generic placeholder text. DO NOT generate random or generic business content.
+4. If website content was provided above, derive your specific topics, pain points, and solutions EXCLUSIVELY from it.
 5. Each post must have exactly 5 slides following the progression: intro, point 1, point 2, summary, CTA.
 
 Return ONLY a valid JSON array of post objects. No markdown, no explanation, no code blocks:
@@ -126,7 +135,19 @@ Rules: headlines under 60 chars, body max 120 chars, keep tone confident and con
     const { error } = await (supabaseAdmin.from('posts') as any).insert(inserts);
     if (error) throw error;
 
-    return NextResponse.json({ success: true, count: posts.length });
+    return NextResponse.json({
+      success: true,
+      count: posts.length,
+      debugContext: {
+        userId,
+        brandName: brand?.logo?.text,
+        websiteURLTried: finalUrl,
+        websiteScrapedLength: websiteContent.length,
+        scrapeError,
+        role: profile?.role,
+        isFallbackUser: userId !== clientUserId
+      }
+    });
   } catch (err: any) {
     console.error('Generate error:', err);
     return NextResponse.json({ error: err.message || 'Failed to generate' }, { status: 500 });
