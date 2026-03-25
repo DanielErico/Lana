@@ -33,6 +33,7 @@ export function BrandProvider({ children }: { children: ReactNode }) {
           colors: row.colors || defaultBrand.colors,
           logo: row.logo || defaultBrand.logo,
           website: row.website || undefined,
+          info: row.info || undefined,
         });
       }
       setIsLoaded(true);
@@ -40,19 +41,11 @@ export function BrandProvider({ children }: { children: ReactNode }) {
     loadBrand();
   }, []);
 
+  // setBrand only updates local React state.
+  // All DB persistence is handled by the /api/brand server route to avoid
+  // stripping the `info` JSONB column via client-side partial upserts.
   const setBrand = async (newBrand: RimberioBrand) => {
     setBrandState(newBrand);
-    const supabase = createClientBrowser();
-    const { data: { session } } = await supabase.auth.getSession();
-    const userId = session?.user?.id;
-    if (!userId) return; // Don't save to DB if logged out
-    
-    await (supabase.from('brands') as any).upsert({
-      user_id: userId,
-      colors: newBrand.colors,
-      logo: newBrand.logo,
-      website: newBrand.website || null,
-    });
   };
 
   return (

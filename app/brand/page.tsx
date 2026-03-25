@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
 import { useBrand } from "@/components/providers/BrandProvider";
+import { createClientBrowser } from "@/utils/supabase/client";
 
 const steps = ["Brand Info","Colors & Fonts","Voice & Tone","AI Training","Review"];
 
@@ -27,11 +28,13 @@ export default function BrandPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   
   const [step, setStep] = useState(0);
-  const [brand, setBrand] = useState({ name: "", industry: "", tagline: "", website: "", logoUrl: "", primaryColor: "#1E40AF", secondaryColor: "#7C3AED", accentColor: "#F59E0B", font: "Inter" });
+  const [brand, setBrand] = useState({ name: "", industry: "", tagline: "", website: "", logoUrl: "", primaryColor: "#1E40AF", secondaryColor: "#7C3AED", accentColor: "#F59E0B", font: "Inter", audience: "", services: "", mission: "" });
   const [toneValues, setToneValues] = useState([50, 40, 45, 60]);
   const [sampleText, setSampleText] = useState("");
   const [analyzing, setAnalyzing] = useState(false);
   const [analyzed, setAnalyzed] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   const analyzeVoice = async () => {
     setAnalyzing(true);
@@ -269,16 +272,62 @@ export default function BrandPage() {
               </div>
               <div className="text-sm text-slate-600">Font: <span className="font-semibold text-slate-900">{brand.font}</span> · Industry: <span className="font-semibold text-slate-900">{brand.industry || "Not set"}</span></div>
             </div>
-            <Button variant="gradient" size="lg" className="w-full" onClick={() => {
-              setGlobalBrand({
-                colors: { primary: brand.primaryColor, light: "#FFFFFF", dark: brand.secondaryColor },
-                logo: { text: brand.name, iconUrl: brand.logoUrl || undefined },
-                website: brand.website || undefined,
-              });
-              router.push("/dashboard");
+            <Button variant="gradient" size="lg" className="w-full" loading={saving} onClick={async () => {
+              setSaving(true);
+              setSaveError(null);
+              try {
+                const supabase = createClientBrowser();
+                const { data: { session } } = await supabase.auth.getSession();
+                const userId = session?.user?.id;
+                if (!userId) {
+                  setSaveError('You must be logged in. Please refresh and log in again.');
+                  setSaving(false);
+                  return;
+                }
+
+                // Build a readable tone string from slider values
+                const toneLabels = ['Professional','Serious','Formal','Conservative'];
+                const toneString = toneValues.map((v, i) => v < 50 ? toneLabels[i] : ['Casual','Playful','Conversational','Bold'][i]).join(', ');
+
+                const res = await fetch('/api/brand', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    userId,
+                    brandName: brand.name,
+                    website: brand.website || null,
+                    company: brand.name,
+                    info: {
+                      audience: brand.audience || brand.industry || '',
+                      tone: toneString,
+                      services: brand.services || sampleText || '',
+                      mission: brand.mission || brand.tagline || '',
+                    },
+                  }),
+                });
+
+                const json = await res.json();
+                if (!res.ok || json.error) throw new Error(json.error || 'Save failed');
+
+                // Update in-memory context too
+                setGlobalBrand({
+                  colors: { primary: brand.primaryColor, light: "#FFFFFF", dark: brand.secondaryColor },
+                  logo: { text: brand.name, iconUrl: brand.logoUrl || undefined },
+                  website: brand.website || undefined,
+                });
+                router.push("/dashboard");
+              } catch (err: any) {
+                setSaveError(err.message);
+                setSaving(false);
+              }
             }}>
               Save Brand Kit & Go to Dashboard
             </Button>
+            {saveError && (
+              <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm font-semibold">
+                ⚠️ {saveError}
+              </div>
+            )}
           </div>
         )}
       </Card>
