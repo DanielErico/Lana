@@ -31,7 +31,14 @@ export default function SettingsPage() {
   const { user, setUser } = useUser();
   const { brand, setBrand } = useBrand();
   const [localUser, setLocalUser] = useState<UserData>(user);
-  const [localBrand, setLocalBrand] = useState({ name: brand.logo?.text || '', website: brand.website || '' });
+  const [localBrand, setLocalBrand] = useState({ 
+    name: brand.logo?.text || '', 
+    website: brand.website || '',
+    audience: brand.info?.audience || '',
+    tone: brand.info?.tone || '',
+    services: brand.info?.services || '',
+    mission: brand.info?.mission || '',
+  });
   const [activeTab, setActiveTab] = useState("Profile");
   const [saving, setSaving] = useState(false);
   const [brandSaving, setBrandSaving] = useState(false);
@@ -52,6 +59,13 @@ export default function SettingsPage() {
     setBrandSaved(false);
     setBrandError(null);
     setDbSnapshot(null);
+
+    const infoObject = {
+      audience: localBrand.audience,
+      tone: localBrand.tone,
+      services: localBrand.services,
+      mission: localBrand.mission,
+    };
 
     const supabase = createClientBrowser();
     const { data: { session } } = await supabase.auth.getSession();
@@ -74,6 +88,7 @@ export default function SettingsPage() {
         name: localUser.name,
         email: localUser.email,
         company: localUser.company,
+        info: infoObject,
       }),
     });
 
@@ -84,6 +99,14 @@ export default function SettingsPage() {
       setBrandError(json.error || 'Unknown error saving brand.');
       return;
     }
+
+    // Refresh context provider after successful API save
+    await setBrand({
+      ...brand,
+      logo: { ...brand.logo, text: localBrand.name },
+      website: localBrand.website || undefined,
+      info: infoObject,
+    });
 
     // Verify: read back from DB to confirm what's actually stored
     const verify = await fetch(`/api/brand?userId=${userId}`);
@@ -182,16 +205,67 @@ export default function SettingsPage() {
               <p className="text-xs text-clay-muted mt-2 px-1">Gemini will scrape your site to learn your products, voice, and audience before generating carousel slides.</p>
             </div>
             <div>
-              <label className="text-[10px] font-black text-clay-muted block mb-2 uppercase tracking-widest px-1">Your Role (used in AI tone)</label>
+              <label className="text-[10px] font-black text-clay-muted block mb-2 uppercase tracking-widest px-1">Your Role <span className="text-slate-400 font-normal">(Used in AI persona)</span></label>
               <input
                 value={localUser.role}
                 onChange={e => setLocalUser(u => ({...u, role: e.target.value}))}
-                placeholder="e.g. Business Owner, Social Media Manager"
+                placeholder="e.g. Founder, Marketing Director"
                 className="w-full px-5 py-4 rounded-[20px] bg-white/50 border border-white shadow-clayPressed text-sm font-bold text-clay-foreground focus:outline-none focus:bg-white focus:shadow-sm hover:bg-white/80 transition-all"
               />
             </div>
           </div>
-          <div className="flex flex-col gap-4 mt-6">
+          
+          <div className="pt-4 mt-4 border-t border-slate-200/50 space-y-5">
+            <div>
+              <h4 className="font-black text-clay-foreground text-sm uppercase tracking-widest mb-1">Deep Brand Context</h4>
+              <p className="text-xs text-clay-muted mb-4">Gemini will use this precise information to build highly relevant slides instead of generic text. The more specific you are, the better the output.</p>
+            </div>
+            
+            <div className="grid md:grid-cols-2 gap-5">
+              <div>
+                <label className="text-[10px] font-black text-clay-muted block mb-2 uppercase tracking-widest px-1">Target Audience</label>
+                <textarea
+                  value={localBrand.audience}
+                  onChange={e => setLocalBrand(b => ({...b, audience: e.target.value}))}
+                  placeholder="e.g. Students and organizations"
+                  rows={2}
+                  className="w-full px-5 py-4 rounded-[20px] bg-white/50 border border-white shadow-clayPressed text-sm font-bold text-clay-foreground focus:outline-none focus:bg-white focus:shadow-sm hover:bg-white/80 transition-all resize-none"
+                />
+              </div>
+              <div>
+                <label className="text-[10px] font-black text-clay-muted block mb-2 uppercase tracking-widest px-1">Brand Tone</label>
+                <textarea
+                  value={localBrand.tone}
+                  onChange={e => setLocalBrand(b => ({...b, tone: e.target.value}))}
+                  placeholder="e.g. Professional, simple, slightly inspirational"
+                  rows={2}
+                  className="w-full px-5 py-4 rounded-[20px] bg-white/50 border border-white shadow-clayPressed text-sm font-bold text-clay-foreground focus:outline-none focus:bg-white focus:shadow-sm hover:bg-white/80 transition-all resize-none"
+                />
+              </div>
+              <div>
+                <label className="text-[10px] font-black text-clay-muted block mb-2 uppercase tracking-widest px-1">Core Services / Products</label>
+                <textarea
+                  value={localBrand.services}
+                  onChange={e => setLocalBrand(b => ({...b, services: e.target.value}))}
+                  placeholder="e.g. Internship matching, CV builder, interview prep"
+                  rows={2}
+                  className="w-full px-5 py-4 rounded-[20px] bg-white/50 border border-white shadow-clayPressed text-sm font-bold text-clay-foreground focus:outline-none focus:bg-white focus:shadow-sm hover:bg-white/80 transition-all resize-none"
+                />
+              </div>
+              <div>
+                <label className="text-[10px] font-black text-clay-muted block mb-2 uppercase tracking-widest px-1">Company Mission</label>
+                <textarea
+                  value={localBrand.mission}
+                  onChange={e => setLocalBrand(b => ({...b, mission: e.target.value}))}
+                  placeholder="e.g. Help students access quality internships"
+                  rows={2}
+                  className="w-full px-5 py-4 rounded-[20px] bg-white/50 border border-white shadow-clayPressed text-sm font-bold text-clay-foreground focus:outline-none focus:bg-white focus:shadow-sm hover:bg-white/80 transition-all resize-none"
+                />
+              </div>
+            </div>
+          </div>
+          
+          <div className="flex flex-col gap-4 mt-6 border-t border-slate-200/50 pt-6">
             <Button variant="primary" size="lg" loading={brandSaving} onClick={handleBrandSave} className="shadow-clayButton font-black w-fit">Save Brand Details</Button>
             
             {brandError && (

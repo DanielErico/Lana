@@ -79,6 +79,10 @@ You are an expert social media content strategist and copywriter for Instagram c
 Generate ${numPosts} carousel post plans for this exact user profile and brand:
 - BRAND NAME: ${brand?.logo?.text || profile?.company || 'Brand'}
 - USER NAME/ROLE: ${profile?.name || 'User'}, ${profile?.role || 'Business Owner'}
+- TARGET AUDIENCE: ${brand?.info?.audience || 'General public'}
+- BRAND TONE/VOICE: ${brand?.info?.tone || 'Professional and engaging'}
+- CORE SERVICES/PRODUCTS: ${brand?.info?.services || 'Not specified - infer from context'}
+- COMPANY MISSION: ${brand?.info?.mission || 'Create value for customers'}
 - CONTENT FOCUS: ${focus}
 - TODAY'S DATE: ${now.toISOString()}${
   websiteContent
@@ -141,10 +145,11 @@ Rules: headlines under 60 chars, body max 120 chars, keep tone confident and con
       debugContext: {
         userId,
         brandName: brand?.logo?.text,
+        brandInfo: brand?.info || 'Not set',
+        role: profile?.role,
         websiteURLTried: finalUrl,
         websiteScrapedLength: websiteContent.length,
         scrapeError,
-        role: profile?.role,
         isFallbackUser: userId !== clientUserId
       }
     });

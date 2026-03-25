@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
   const admin = createAdminClient();
   const [{ data: profile, error: pe }, { data: brand, error: be }] = await Promise.all([
     admin.from('profiles').select('name,email,role,company').eq('id', userId).maybeSingle(),
-    admin.from('brands').select('logo,colors,website').eq('user_id', userId).maybeSingle(),
+    admin.from('brands').select('logo,colors,website,info').eq('user_id', userId).maybeSingle(),
   ]);
 
   if (pe || be) return NextResponse.json({ error: pe?.message || be?.message }, { status: 500 });
@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
 // POST /api/brand — save brand + profile using admin client (bypasses RLS)
 export async function POST(request: NextRequest) {
   try {
-    const { userId, brandName, website, role, name, email, company } = await request.json();
+    const { userId, brandName, website, role, name, email, company, info } = await request.json();
     if (!userId) return NextResponse.json({ error: 'userId required' }, { status: 400 });
 
     const admin = createAdminClient();
@@ -35,6 +35,7 @@ export async function POST(request: NextRequest) {
         logo: { text: brandName || existingBrand?.logo?.text || '', iconUrl: existingBrand?.logo?.iconUrl },
         colors: existingBrand?.colors || { primary: '#1E40AF', light: '#FFFFFF', dark: '#0A0A0A' },
         website: website || null,
+        info: info || existingBrand?.info || null,
       }, { onConflict: 'user_id' }),
       (admin.from('profiles') as any).upsert({
         id: userId,
