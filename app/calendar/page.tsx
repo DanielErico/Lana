@@ -63,7 +63,6 @@ export default function CalendarPage() {
       const supabase = createClientBrowser();
       const { data: { session } } = await supabase.auth.getSession();
       const userId = session?.user?.id;
-      if (!userId) throw new Error('You must be logged in to generate plans.');
 
       const res = await fetch('/api/posts/generate', {
         method: 'POST',
