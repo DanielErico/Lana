@@ -31,7 +31,8 @@ export function BrandProvider({ children }: { children: ReactNode }) {
         const row = data as any;
         setBrandState({
           colors: row.colors || defaultBrand.colors,
-          logo: row.logo || defaultBrand.logo
+          logo: row.logo || defaultBrand.logo,
+          website: row.website || undefined,
         });
       }
       setIsLoaded(true);
@@ -49,7 +50,8 @@ export function BrandProvider({ children }: { children: ReactNode }) {
     await (supabase.from('brands') as any).upsert({
       user_id: userId,
       colors: newBrand.colors,
-      logo: newBrand.logo
+      logo: newBrand.logo,
+      website: newBrand.website || null,
     });
   };
 

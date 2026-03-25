@@ -31,9 +31,30 @@ export async function POST(request: NextRequest) {
     const profile = profileRaw as any;
     const brand = brandRaw as any;
 
-    const brandContext = brand
-      ? `Brand name: ${brand.logo?.text || 'My Brand'}, Primary color: ${brand.colors?.primary}`
-      : 'No brand defined yet';
+    // --- Website scraping: fetch and extract text if a website URL is saved ---
+    let websiteContent = '';
+    const websiteUrl = brand?.website;
+    if (websiteUrl) {
+      try {
+        const res = await fetch(websiteUrl, {
+          headers: { 'User-Agent': 'Mozilla/5.0 (compatible; LanaBrandBot/1.0)' },
+          signal: AbortSignal.timeout(6000),
+        });
+        const html = await res.text();
+        // Strip tags, condense whitespace, and take first 3000 chars
+        const text = html
+          .replace(/<script[\s\S]*?<\/script>/gi, '')
+          .replace(/<style[\s\S]*?<\/style>/gi, '')
+          .replace(/<[^>]+>/g, ' ')
+          .replace(/\s+/g, ' ')
+          .trim()
+          .slice(0, 3000);
+        if (text.length > 100) websiteContent = text;
+      } catch {
+        // Website unavailable — silently continue without it
+      }
+    }
+    // -------------------------------------------------------------------------
 
     const now = new Date();
     const numPosts = frequency === 'Daily' ? 7 : frequency === '5x/week' ? 5 : 3;
@@ -47,20 +68,27 @@ export async function POST(request: NextRequest) {
 You are an expert social media content strategist and copywriter for Instagram carousels.
 
 Generate ${numPosts} carousel post plans for this exact user profile and brand:
-- BRAND NAME: ${brand.logo?.text || profile?.company || 'Brand'}
-- BRAND TONE: Professional, authoritative, yet approachable.
+- BRAND NAME: ${brand?.logo?.text || profile?.company || 'Brand'}
 - USER NAME/ROLE: ${profile?.name || 'User'}, ${profile?.role || 'Business Owner'}
 - CONTENT FOCUS: ${focus}
-- PREFERRED FREQUENCY: ${numPosts} posts
-- TODAY'S DATE: ${now.toISOString()}
+- TODAY'S DATE: ${now.toISOString()}${
+  websiteContent
+    ? `
+
+--- BRAND WEBSITE CONTENT (extracted live from ${websiteUrl}) ---
+${websiteContent}
+--- USE THE ABOVE to understand the brand's real products, services, voice, and audience. ---`
+    : ''
+}
 
 ${dateModeInstruction}
 
 CRITICAL INSTRUCTIONS FOR SLIDE CONTENT:
-1. You MUST explicitly mention the BRAND NAME (${brand.logo?.text || profile?.company || 'Brand'}) in the slides where natural.
+1. You MUST explicitly mention the BRAND NAME (${brand?.logo?.text || profile?.company || 'Brand'}) in the slides where natural.
 2. The content must sound like it is written by a ${profile?.role || 'professional'} speaking directly to their target audience.
-3. WEAVE the brand into the stories, examples, and Calls to Action (CTA). Do NOT use generic placeholder text. Give real, actionable marketing/business advice tailored to their specific niche.
-4. Each post must have exactly 5 slides following the progression: intro, point 1, point 2, summary, CTA.
+3. WEAVE the brand's specific services, products, or values into stories and CTAs. Do NOT use generic placeholder text.
+4. If website content was provided above, derive specific topics, pain points, and solutions from it.
+5. Each post must have exactly 5 slides following the progression: intro, point 1, point 2, summary, CTA.
 
 Return ONLY a valid JSON array of post objects. No markdown, no explanation, no code blocks:
 [

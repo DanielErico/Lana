@@ -27,7 +27,7 @@ export default function BrandPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   
   const [step, setStep] = useState(0);
-  const [brand, setBrand] = useState({ name: "", industry: "", tagline: "", logoUrl: "", primaryColor: "#1E40AF", secondaryColor: "#7C3AED", accentColor: "#F59E0B", font: "Inter" });
+  const [brand, setBrand] = useState({ name: "", industry: "", tagline: "", website: "", logoUrl: "", primaryColor: "#1E40AF", secondaryColor: "#7C3AED", accentColor: "#F59E0B", font: "Inter" });
   const [toneValues, setToneValues] = useState([50, 40, 45, 60]);
   const [sampleText, setSampleText] = useState("");
   const [analyzing, setAnalyzing] = useState(false);
@@ -91,6 +91,22 @@ export default function BrandPage() {
             <div>
               <label className="text-sm font-semibold text-slate-700 block mb-1.5">Tagline / Slogan</label>
               <input value={brand.tagline} onChange={e => setBrand(b => ({...b, tagline: e.target.value}))} placeholder="e.g. Automate your growth" className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 hover:border-slate-300 transition-colors"/>
+            </div>
+            <div>
+              <label className="text-sm font-semibold text-slate-700 block mb-1.5">
+                Website URL <span className="text-slate-400 font-normal">(optional — AI will learn from it)</span>
+              </label>
+              <div className="relative">
+                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm select-none">🌐</span>
+                <input
+                  value={brand.website}
+                  onChange={e => setBrand(b => ({...b, website: e.target.value}))}
+                  placeholder="https://yourwebsite.com"
+                  type="url"
+                  className="w-full pl-9 pr-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 hover:border-slate-300 transition-colors"
+                />
+              </div>
+              <p className="text-xs text-slate-400 mt-1.5">If provided, Gemini will read your site to build richer, more specific brand content.</p>
             </div>
             <div>
               <label className="text-sm font-semibold text-slate-700 block mb-1.5">Logo</label>
@@ -256,7 +272,8 @@ export default function BrandPage() {
             <Button variant="gradient" size="lg" className="w-full" onClick={() => {
               setGlobalBrand({
                 colors: { primary: brand.primaryColor, light: "#FFFFFF", dark: brand.secondaryColor },
-                logo: { text: brand.name, iconUrl: brand.logoUrl || undefined }
+                logo: { text: brand.name, iconUrl: brand.logoUrl || undefined },
+                website: brand.website || undefined,
               });
               router.push("/dashboard");
             }}>

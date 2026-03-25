@@ -11,6 +11,7 @@ export interface RimberioBrand {
     text: string;
     iconUrl?: string;
   };
+  website?: string; // Optional: used by AI to scrape brand context
 }
 
 export interface RimberioSlideData {
