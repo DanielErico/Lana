@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
 
   const supabase = createAdminClient();
   const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
-  const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+  const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
 
   try {
     // Step 1: Pull all user profiles + their brand settings
@@ -32,7 +32,7 @@ export async function GET(request: NextRequest) {
         .from('brands')
         .select('*')
         .eq('user_id', profile.id)
-        .single();
+        .maybeSingle();
 
       const brandContext = brand
         ? `Primary color: ${brand.colors?.primary || '#000'}, Brand name: ${brand.logo?.text || 'Unknown'}`

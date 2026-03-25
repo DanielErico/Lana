@@ -26,7 +26,7 @@ export function BrandProvider({ children }: { children: ReactNode }) {
       const { data: { session } } = await supabase.auth.getSession();
       const userId = session?.user?.id || '00000000-0000-0000-0000-000000000000';
       
-      const { data } = await supabase.from('brands').select('*').eq('user_id', userId).single();
+      const { data } = await supabase.from('brands').select('*').eq('user_id', userId).maybeSingle();
       if (data) {
         const row = data as any;
         setBrandState({

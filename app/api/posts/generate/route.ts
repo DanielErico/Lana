@@ -9,7 +9,7 @@ export async function POST(request: NextRequest) {
 
     const supabaseAdmin = createAdminClient();
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
 
     // Get current user session from cookie header
     const supabaseClient = createClientBrowser();
@@ -18,8 +18,8 @@ export async function POST(request: NextRequest) {
 
     // Load user profile + brand
     const [{ data: profile }, { data: brand }] = await Promise.all([
-      supabaseAdmin.from('profiles').select('*').eq('id', userId).single(),
-      supabaseAdmin.from('brands').select('*').eq('user_id', userId).single()
+      supabaseAdmin.from('profiles').select('*').eq('id', userId).maybeSingle(),
+      supabaseAdmin.from('brands').select('*').eq('user_id', userId).maybeSingle()
     ]);
 
     const brandContext = brand
