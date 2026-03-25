@@ -36,6 +36,8 @@ export default function SettingsPage() {
   const [saving, setSaving] = useState(false);
   const [brandSaving, setBrandSaving] = useState(false);
   const [brandSaved, setBrandSaved] = useState(false);
+  const [brandError, setBrandError] = useState<string | null>(null);
+  const [dbSnapshot, setDbSnapshot] = useState<{name?: string; website?: string; role?: string} | null>(null);
   const [show2FASetup, setShow2FASetup] = useState(false);
   const [instagramConnected, setInstagramConnected] = useState(false);
 
@@ -48,26 +50,52 @@ export default function SettingsPage() {
   const handleBrandSave = async () => {
     setBrandSaving(true);
     setBrandSaved(false);
-    await setBrand({
-      ...brand,
-      logo: { ...brand.logo, text: localBrand.name },
-      website: localBrand.website || undefined,
-    });
-    // Also update the profile role/name if changed
+    setBrandError(null);
+    setDbSnapshot(null);
+
     const supabase = createClientBrowser();
     const { data: { session } } = await supabase.auth.getSession();
-    if (session?.user?.id) {
-      await (supabase.from('profiles') as any).upsert({
-        id: session.user.id,
+    const userId = session?.user?.id;
+
+    if (!userId) {
+      setBrandError('You are not logged in. Please log in and try again.');
+      setBrandSaving(false);
+      return;
+    }
+
+    const res = await fetch('/api/brand', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        userId,
+        brandName: localBrand.name,
+        website: localBrand.website,
+        role: localUser.role,
         name: localUser.name,
         email: localUser.email,
-        role: localUser.role,
         company: localUser.company,
-      });
-    }
+      }),
+    });
+
+    const json = await res.json();
     setBrandSaving(false);
+
+    if (!res.ok || json.error) {
+      setBrandError(json.error || 'Unknown error saving brand.');
+      return;
+    }
+
+    // Verify: read back from DB to confirm what's actually stored
+    const verify = await fetch(`/api/brand?userId=${userId}`);
+    const verifyData = await verify.json();
+    setDbSnapshot({
+      name: verifyData.brand?.logo?.text,
+      website: verifyData.brand?.website,
+      role: verifyData.profile?.role,
+    });
+
     setBrandSaved(true);
-    setTimeout(() => setBrandSaved(false), 3000);
+    setTimeout(() => setBrandSaved(false), 8000);
   };
 
   return (
@@ -163,9 +191,25 @@ export default function SettingsPage() {
               />
             </div>
           </div>
-          <div className="flex items-center gap-4">
-            <Button variant="primary" size="lg" loading={brandSaving} onClick={handleBrandSave} className="shadow-clayButton font-black">Save Brand Details</Button>
-            {brandSaved && <span className="text-emerald-500 font-black text-sm">✓ Saved! AI will use these on next generation.</span>}
+          <div className="flex flex-col gap-4 mt-6">
+            <Button variant="primary" size="lg" loading={brandSaving} onClick={handleBrandSave} className="shadow-clayButton font-black w-fit">Save Brand Details</Button>
+            
+            {brandError && (
+              <div className="p-4 bg-red-50 border border-red-200 rounded-2xl text-red-600 text-sm font-bold">
+                ⚠️ {brandError}
+              </div>
+            )}
+            
+            {brandSaved && dbSnapshot && (
+              <div className="p-5 bg-emerald-50 border border-emerald-200 rounded-2xl animate-fade-in">
+                <p className="text-emerald-700 font-black text-sm mb-2">✓ Saved successfully to database!</p>
+                <div className="text-xs text-emerald-800 space-y-1">
+                  <p><strong className="font-bold">Brand Name:</strong> {dbSnapshot.name || 'Not set'}</p>
+                  <p><strong className="font-bold">Website:</strong> {dbSnapshot.website || 'Not set'}</p>
+                  <p><strong className="font-bold">Role:</strong> {dbSnapshot.role || 'Not set'}</p>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}
