@@ -40,13 +40,14 @@ export function UserProvider({ children }: { children: ReactNode }) {
       
       const { data } = await supabase.from('profiles').select('*').eq('id', userId).single();
       if (data) {
+        const row = data as any;
         setUserState({
-          name: data.name || defaultUser.name,
-          email: data.email || defaultUser.email,
-          company: data.company || defaultUser.company,
-          timezone: data.timezone || defaultUser.timezone,
-          role: data.role || defaultUser.role,
-          plan: data.plan || defaultUser.plan
+          name: row.name || defaultUser.name,
+          email: row.email || defaultUser.email,
+          company: row.company || defaultUser.company,
+          timezone: row.timezone || defaultUser.timezone,
+          role: row.role || defaultUser.role,
+          plan: row.plan || defaultUser.plan
         });
       }
       setIsLoaded(true);
@@ -60,7 +61,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
     const { data: { session } } = await supabase.auth.getSession();
     const userId = session?.user?.id || '00000000-0000-0000-0000-000000000000';
     
-    await supabase.from('profiles').upsert({ 
+    await (supabase.from('profiles') as any).upsert({ 
       id: userId, 
       ...newUserData 
     });

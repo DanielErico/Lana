@@ -28,9 +28,10 @@ export function BrandProvider({ children }: { children: ReactNode }) {
       
       const { data } = await supabase.from('brands').select('*').eq('user_id', userId).single();
       if (data) {
+        const row = data as any;
         setBrandState({
-          colors: data.colors || defaultBrand.colors,
-          logo: data.logo || defaultBrand.logo
+          colors: row.colors || defaultBrand.colors,
+          logo: row.logo || defaultBrand.logo
         });
       }
       setIsLoaded(true);
@@ -44,7 +45,7 @@ export function BrandProvider({ children }: { children: ReactNode }) {
     const { data: { session } } = await supabase.auth.getSession();
     const userId = session?.user?.id || '00000000-0000-0000-0000-000000000000';
     
-    await supabase.from('brands').upsert({
+    await (supabase.from('brands') as any).upsert({
       user_id: userId,
       colors: newBrand.colors,
       logo: newBrand.logo
