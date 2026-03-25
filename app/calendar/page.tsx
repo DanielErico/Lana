@@ -4,6 +4,8 @@ import { useRouter } from "next/navigation";
 import Card from "@/components/ui/Card";
 import Badge from "@/components/ui/Badge";
 import { createClientBrowser } from "@/utils/supabase/client";
+import { useBrand } from "@/components/providers/BrandProvider";
+import SlidePreview from "@/components/templates/rimberio/SlidePreview";
 
 const DAYS = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 const MONTH_START_DAY = 2; // March 2026 starts on Sunday index 2
@@ -30,6 +32,9 @@ export default function CalendarPage() {
   const [selected, setSelected] = useState<number | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [clearing, setClearing] = useState(false);
+  const [previewPost, setPreviewPost] = useState<Post | null>(null);
+
+  const { brand } = useBrand();
 
   // Wizard state
   const [step, setStep] = useState<Step>('dateMode');
@@ -227,15 +232,23 @@ export default function CalendarPage() {
               <p className="text-[10px] font-black text-clay-muted uppercase tracking-widest mb-6">{selectedDayPosts.length} post{selectedDayPosts.length > 1 ? 's' : ''}</p>
               <div className="space-y-3 flex-1">
                 {selectedDayPosts.map((p, i) => (
-                  <div key={i} className="p-4 rounded-[20px] bg-white/70 border border-white shadow-sm">
-                    <p className="text-sm font-black text-clay-foreground">{p.title}</p>
-                    <div className="flex items-center justify-between mt-2">
-                      <span className="text-[10px] font-bold text-clay-muted uppercase tracking-widest">
+                  <div key={i} className="p-4 rounded-[20px] bg-white/70 border border-white shadow-sm flex flex-col gap-3">
+                    <p className="text-sm font-black text-clay-foreground leading-tight">{p.title}</p>
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-bold text-clay-muted uppercase tracking-widest bg-white px-2 py-1 rounded-md shadow-sm border border-white">
                         {new Date(p.scheduled_for).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                       </span>
-                      <Badge variant={p.status === 'published' ? 'success' : p.status === 'scheduled' ? 'info' : 'warning'} size="sm">
-                        {p.status}
-                      </Badge>
+                      <div className="flex items-center gap-2">
+                        <Badge variant={p.status === 'published' ? 'success' : p.status === 'scheduled' ? 'info' : 'warning'} size="sm">
+                          {p.status}
+                        </Badge>
+                        <button 
+                          onClick={() => setPreviewPost(p)}
+                          className="bg-clay-accent text-white px-3 py-1 text-xs font-black rounded-full hover:bg-indigo-500 shadow-sm transition-colors cursor-pointer"
+                        >
+                          Preview
+                        </button>
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -437,6 +450,61 @@ export default function CalendarPage() {
           </div>
         </div>
       )}
+
+      {/* Slide Preview Modal */}
+      {previewPost && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-md" onClick={() => setPreviewPost(null)} />
+          <div className="relative bg-[#F4F5F6] rounded-[40px] shadow-2xl p-6 w-full max-w-5xl max-h-[90vh] flex flex-col overflow-hidden border-2 border-white">
+            
+            {/* Header */}
+            <div className="flex items-center justify-between mb-8 pb-4 border-b border-black/5 shrink-0 px-2 mt-2">
+              <div>
+                <h3 className="text-2xl font-black text-clay-foreground tracking-tight">{previewPost.title}</h3>
+                <p className="text-sm font-bold text-clay-muted mt-1 uppercase tracking-widest">
+                  {new Date(previewPost.scheduled_for).toLocaleString()}
+                </p>
+              </div>
+              <button 
+                onClick={() => setPreviewPost(null)}
+                className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-clay-foreground hover:bg-red-50 hover:text-red-500 shadow-sm transition-colors cursor-pointer"
+              >
+                <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+                  <path d="M18 6L6 18M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Slides Carousel */}
+            <div className="flex-1 overflow-x-auto overflow-y-hidden snap-x snap-mandatory flex items-center gap-6 pb-6 px-4 scrollbar-hide">
+              {previewPost.slides?.map((slide, idx) => (
+                <div key={idx} className="snap-center shrink-0 w-[400px] h-[400px] rounded-3xl overflow-hidden shadow-clayDeep border-4 border-white transform transition-transform hover:scale-[1.02]">
+                  <div style={{ transform: 'scale(0.37)', transformOrigin: 'top left', width: '1080px', height: '1080px' }}>
+                    <SlidePreview slide={slide} brand={brand as any} />
+                  </div>
+                </div>
+              ))}
+            </div>
+            
+            {/* Action Bar */}
+            <div className="shrink-0 flex justify-between items-center mt-4 px-4 pt-4 border-t border-black/5">
+              <span className="text-xs font-bold text-clay-muted uppercase tracking-widest">
+                Scroll horizontally to view all {previewPost.slides?.length || 0} slides
+              </span>
+              <button 
+                onClick={() => {
+                  alert('Integration to send to Editor goes here!');
+                }}
+                className="bg-clay-accent text-white px-6 py-3 rounded-2xl font-black tracking-wide shadow-clayButton hover:-translate-y-0.5 transition-transform"
+              >
+                Edit in Design Studio
+              </button>
+            </div>
+
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }

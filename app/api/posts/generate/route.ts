@@ -44,17 +44,23 @@ export async function POST(request: NextRequest) {
       : `Select the best dates for maximum engagement (avoid weekends, prefer Tue-Thu, best times: 9AM, 12PM, 6PM) — generate ${numPosts} posts over the next 30 days`;
 
     const prompt = `
-You are an expert social media content strategist for Instagram carousels.
+You are an expert social media content strategist and copywriter for Instagram carousels.
 
-Generate ${numPosts} carousel post plans for this user:
-- Name: ${profile?.name || 'User'}
-- Company: ${profile?.company || 'Brand'}
-- Role: ${profile?.role || 'Business Owner'}
-- Brand: ${brandContext}
-- Content focus: ${focus}
-- Today's date: ${now.toISOString()}
+Generate ${numPosts} carousel post plans for this exact user profile and brand:
+- BRAND NAME: ${brand.logo?.text || profile?.company || 'Brand'}
+- BRAND TONE: Professional, authoritative, yet approachable.
+- USER NAME/ROLE: ${profile?.name || 'User'}, ${profile?.role || 'Business Owner'}
+- CONTENT FOCUS: ${focus}
+- PREFERRED FREQUENCY: ${numPosts} posts
+- TODAY'S DATE: ${now.toISOString()}
 
 ${dateModeInstruction}
+
+CRITICAL INSTRUCTIONS FOR SLIDE CONTENT:
+1. You MUST explicitly mention the BRAND NAME (${brand.logo?.text || profile?.company || 'Brand'}) in the slides where natural.
+2. The content must sound like it is written by a ${profile?.role || 'professional'} speaking directly to their target audience.
+3. WEAVE the brand into the stories, examples, and Calls to Action (CTA). Do NOT use generic placeholder text. Give real, actionable marketing/business advice tailored to their specific niche.
+4. Each post must have exactly 5 slides following the progression: intro, point 1, point 2, summary, CTA.
 
 Return ONLY a valid JSON array of post objects. No markdown, no explanation, no code blocks:
 [
