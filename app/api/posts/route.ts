@@ -1,32 +1,28 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { createAdminClient } from '@/utils/supabase/admin';
-import { createClientBrowser } from '@/utils/supabase/client';
 
-// GET all posts for current user
-export async function GET() {
-  const supabase = createClientBrowser();
-  const { data: { session } } = await supabase.auth.getSession();
-  const userId = session?.user?.id || '00000000-0000-0000-0000-000000000000';
+// GET all posts for current user — userId passed as query param
+export async function GET(request: NextRequest) {
+  const { searchParams } = new URL(request.url);
+  const userId = searchParams.get('userId');
 
   const admin = createAdminClient();
-  const { data, error } = await admin
-    .from('posts')
-    .select('*')
-    .eq('user_id', userId)
-    .order('scheduled_for', { ascending: true });
+  let query = (admin.from('posts') as any).select('*').order('scheduled_for', { ascending: true });
+  if (userId) query = query.eq('user_id', userId);
 
+  const { data, error } = await query;
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json({ posts: data });
 }
 
-// DELETE all posts for current user
-export async function DELETE() {
-  const supabase = createClientBrowser();
-  const { data: { session } } = await supabase.auth.getSession();
-  const userId = session?.user?.id || '00000000-0000-0000-0000-000000000000';
+// DELETE all posts for a user — userId passed as query param
+export async function DELETE(request: NextRequest) {
+  const { searchParams } = new URL(request.url);
+  const userId = searchParams.get('userId');
+  if (!userId) return NextResponse.json({ error: 'userId required' }, { status: 400 });
 
   const admin = createAdminClient();
-  const { error } = await admin.from('posts').delete().eq('user_id', userId);
+  const { error } = await (admin.from('posts') as any).delete().eq('user_id', userId);
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json({ success: true });

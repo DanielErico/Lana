@@ -5,22 +5,25 @@ import { createClientBrowser } from '@/utils/supabase/client';
 
 export async function POST(request: NextRequest) {
   try {
-    const { dateMode, selectedDates, focusTypes, frequency } = await request.json();
+    const { dateMode, selectedDates, focusTypes, frequency, userId: clientUserId } = await request.json();
 
     const supabaseAdmin = createAdminClient();
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
     const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
 
-    // Get current user session from cookie header
-    const supabaseClient = createClientBrowser();
-    const { data: { session } } = await supabaseClient.auth.getSession();
-    const userId = session?.user?.id || '00000000-0000-0000-0000-000000000000';
+    // userId comes from the client (authenticated session on browser)
+    const userId = clientUserId;
+    if (!userId) {
+      return NextResponse.json({ error: 'Not authenticated. Please log in.' }, { status: 401 });
+    }
 
     // Load user profile + brand
-    const [{ data: profile }, { data: brand }] = await Promise.all([
+    const [{ data: profileRaw }, { data: brandRaw }] = await Promise.all([
       supabaseAdmin.from('profiles').select('*').eq('id', userId).maybeSingle(),
       supabaseAdmin.from('brands').select('*').eq('user_id', userId).maybeSingle()
     ]);
+    const profile = profileRaw as any;
+    const brand = brandRaw as any;
 
     const brandContext = brand
       ? `Brand name: ${brand.logo?.text || 'My Brand'}, Primary color: ${brand.colors?.primary}`
@@ -80,7 +83,7 @@ Rules: headlines under 60 chars, body max 120 chars, keep tone confident and con
       scheduled_for: p.scheduled_for,
     }));
 
-    const { error } = await supabaseAdmin.from('posts').insert(inserts);
+    const { error } = await (supabaseAdmin.from('posts') as any).insert(inserts);
     if (error) throw error;
 
     return NextResponse.json({ success: true, count: posts.length });

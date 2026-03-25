@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Card from "@/components/ui/Card";
 import Badge from "@/components/ui/Badge";
+import { createClientBrowser } from "@/utils/supabase/client";
 
 const DAYS = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 const MONTH_START_DAY = 2; // March 2026 starts on Sunday index 2
@@ -41,7 +42,11 @@ export default function CalendarPage() {
 
   const fetchPosts = useCallback(async () => {
     setLoading(true);
-    const res = await fetch('/api/posts');
+    const supabase = createClientBrowser();
+    const { data: { session } } = await supabase.auth.getSession();
+    const userId = session?.user?.id;
+    const url = userId ? `/api/posts?userId=${userId}` : '/api/posts';
+    const res = await fetch(url);
     const json = await res.json();
     setPosts(json.posts || []);
     setLoading(false);
@@ -54,6 +59,12 @@ export default function CalendarPage() {
     setStep('generating');
     setError(null);
     try {
+      // Get user ID from client-side session
+      const supabase = createClientBrowser();
+      const { data: { session } } = await supabase.auth.getSession();
+      const userId = session?.user?.id;
+      if (!userId) throw new Error('You must be logged in to generate plans.');
+
       const res = await fetch('/api/posts/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -64,7 +75,8 @@ export default function CalendarPage() {
             return date.toISOString();
           }),
           focusTypes,
-          frequency
+          frequency,
+          userId
         })
       });
       const json = await res.json();
@@ -82,7 +94,10 @@ export default function CalendarPage() {
   const handleClear = async () => {
     if (!confirm('Clear all generated post plans? This cannot be undone.')) return;
     setClearing(true);
-    await fetch('/api/posts', { method: 'DELETE' });
+    const supabase = createClientBrowser();
+    const { data: { session } } = await supabase.auth.getSession();
+    const userId = session?.user?.id;
+    if (userId) await fetch(`/api/posts?userId=${userId}`, { method: 'DELETE' });
     setPosts([]);
     setClearing(false);
   };
