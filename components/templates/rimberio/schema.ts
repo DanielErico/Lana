@@ -18,6 +18,7 @@ export interface RimberioBrand {
     services?: string;
     mission?: string;
   };
+  fontFamily?: string;
 }
 
 export interface RimberioSlideData {

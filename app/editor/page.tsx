@@ -9,12 +9,14 @@ import { createClientBrowser } from "@/utils/supabase/client";
 import { RimberioSlideData, RimberioBrand } from '@/components/templates/rimberio/schema';
 import SlidePreview from '@/components/templates/rimberio/SlidePreview';
 import MinimalistPreview from '@/components/templates/minimalist/MinimalistPreview';
+import SerenePreview from '@/components/templates/serene/SerenePreview';
 import { useBrand } from '@/components/providers/BrandProvider';
 import { useRouter } from 'next/navigation';
 
 const templates = [
   { id: "rimberio", name: "Rimberio Theme", type: "Tech SaaS" },
   { id: "minimalist", name: "Minimalist Branding", type: "Classic Designer" },
+  { id: "serene", name: "Serene Serif", type: "Earthy & Elegant" },
 ];
 
 const defaultBrand: RimberioBrand = {
@@ -86,7 +88,7 @@ function EditorContent() {
   const [activeSlide, setActiveSlide] = useState(0);
   const [activeTab, setActiveTab] = useState("template");
   const [caption, setCaption] = useState("");
-  const { brand } = useBrand();
+  const { brand, setBrand } = useBrand();
   const router = useRouter();
   const [generatingAI, setGeneratingAI] = useState<string | null>(null);
 
@@ -199,11 +201,9 @@ function EditorContent() {
                 }}
               >
                 <div style={{ width: 1080, height: 1080 }}>
-                  {templateId === 'rimberio' ? (
-                    <SlidePreview slide={slide} brand={brand} />
-                  ) : (
-                    <MinimalistPreview slide={slide} brand={brand} />
-                  )}
+                  {templateId === 'rimberio' && <SlidePreview slide={slide} brand={brand} />}
+                  {templateId === 'minimalist' && <MinimalistPreview slide={slide} brand={brand} />}
+                  {templateId === 'serene' && <SerenePreview slide={slide} brand={brand} />}
                 </div>
               </div>
               <div className="absolute inset-0 p-2 flex flex-col justify-between pointer-events-none z-20">
@@ -259,11 +259,9 @@ function EditorContent() {
                   }}
                 >
                   <div className="canvas-inner" style={{ width: 1080, height: 1080 }}>
-                    {templateId === 'rimberio' ? (
-                      <SlidePreview slide={currentSlide} brand={brand} />
-                    ) : (
-                      <MinimalistPreview slide={currentSlide} brand={brand} />
-                    )}
+                    {templateId === 'rimberio' && <SlidePreview slide={currentSlide} brand={brand} />}
+                    {templateId === 'minimalist' && <MinimalistPreview slide={currentSlide} brand={brand} />}
+                    {templateId === 'serene' && <SerenePreview slide={currentSlide} brand={brand} />}
                   </div>
                 </div>
               </div>
@@ -304,6 +302,27 @@ function EditorContent() {
             )}
             {activeTab === "design" && (
               <div className="space-y-6">
+                <div>
+                  <p className="text-sm font-black text-clay-muted mb-4 uppercase tracking-widest text-[#666]">Font Family</p>
+                  <div className="grid grid-cols-2 gap-2">
+                    {[
+                      { id: 'Inter', name: 'Sans (Inter)' },
+                      { id: 'Playfair', name: 'Serif (Playfair)' },
+                      { id: 'Montserrat', name: 'Modern (Mont)' },
+                      { id: 'Outfit', name: 'Geometric (Outfit)' }
+                    ].map((f) => (
+                      <button 
+                        key={f.id} 
+                        onClick={() => {
+                          setBrand({ ...brand, fontFamily: f.id });
+                        }}
+                        className={`py-3 px-2 rounded-xl border-2 text-[10px] font-bold uppercase tracking-wider transition-all ${brand.fontFamily === f.id ? 'border-clay-accent bg-clay-accent/5 text-clay-accent' : 'border-slate-100 text-clay-muted hover:border-slate-300'}`}
+                      >
+                        {f.name}
+                      </button>
+                    ))}
+                  </div>
+                </div>
                 <div>
                   <p className="text-sm font-black text-clay-muted mb-4 uppercase tracking-widest">Theme Style</p>
                   <div className="grid grid-cols-3 gap-2">

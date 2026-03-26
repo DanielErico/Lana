@@ -59,11 +59,12 @@ export default function SlidePreview({ slide, brand, isSmall = false }: Props) {
       }}
     >
       <div 
-        className="absolute inset-0 flex flex-col justify-between p-[80px] box-border"
+        className={`absolute inset-0 flex flex-col justify-between p-[80px] box-border ${brand.fontFamily ? `font-${brand.fontFamily.toLowerCase()}` : 'font-sans'}`}
         style={{
           width: 1080,
           height: 1080,
-          color: colors.text
+          color: colors.text,
+          fontFamily: brand.fontFamily ? `var(--font-${brand.fontFamily.toLowerCase()})` : 'inherit'
         }}
       >
         {slide.layout === 'intro_card' && (

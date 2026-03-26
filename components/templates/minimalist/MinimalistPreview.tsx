@@ -33,12 +33,13 @@ export default function MinimalistPreview({ slide, brand, isSmall = false }: Pro
 
   return (
     <div 
-      className="shrink-0 relative font-sans overflow-hidden flex justify-center items-center box-border select-none"
+      className={`shrink-0 relative font-sans overflow-hidden flex justify-center items-center box-border select-none ${brand.fontFamily ? `font-${brand.fontFamily.toLowerCase()}` : 'font-sans'}`}
       style={{
         width: 1080,
         height: 1080,
         backgroundColor: '#EAE2D5', // Paper/Cream background
         backgroundImage: `url("https://www.transparenttextures.com/patterns/natural-paper.png")`, // Subtle paper texture
+        fontFamily: brand.fontFamily ? `var(--font-${brand.fontFamily.toLowerCase()})` : 'inherit'
       }}
     >
       {/* Texture Overlay */}

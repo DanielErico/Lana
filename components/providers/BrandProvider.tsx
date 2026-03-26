@@ -34,6 +34,7 @@ export function BrandProvider({ children }: { children: ReactNode }) {
           logo: row.logo || defaultBrand.logo,
           website: row.website || undefined,
           info: row.info || undefined,
+          fontFamily: row.info?.fontFamily || undefined,
         });
       }
       setIsLoaded(true);
