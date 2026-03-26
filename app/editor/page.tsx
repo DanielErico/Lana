@@ -162,10 +162,14 @@ function EditorContent() {
     setScheduleSuccess(false);
     try {
       const dateTime = new Date(`${scheduleDate}T${scheduleTime}`).toISOString();
+      const supabase = createClientBrowser();
+      const { data: { session } } = await supabase.auth.getSession();
+      const userId = session?.user?.id;
+
       const res = await fetch('/api/posts/schedule', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ postId, scheduledAt: dateTime, templateId, caption })
+        body: JSON.stringify({ postId, scheduledAt: dateTime, templateId, caption, userId })
       });
       if (res.ok) {
         setScheduleSuccess(true);

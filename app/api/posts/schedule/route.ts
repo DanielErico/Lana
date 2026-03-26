@@ -1,21 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClientServer } from '@/utils/supabase/server';
-import { createClient } from '@supabase/supabase-js';
-
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+import { createAdminClient } from '@/utils/supabase/admin';
 
 export async function POST(req: NextRequest) {
-  const supabase = await createClientServer();
-  const { data: { session } } = await supabase.auth.getSession();
-  if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  const { postId, scheduledAt, templateId = 'rimberio', caption, userId } = await req.json();
 
-  const { postId, scheduledAt, templateId = 'rimberio', caption } = await req.json();
+  if (!userId) return NextResponse.json({ error: 'Unauthorized: userId required' }, { status: 401 });
   if (!postId || !scheduledAt) {
     return NextResponse.json({ error: 'postId and scheduledAt are required' }, { status: 400 });
   }
+
+  const supabaseAdmin = createAdminClient();
 
   // 1. Save the scheduled time and status to Supabase
   const { error: updateError } = await supabaseAdmin
@@ -26,7 +20,7 @@ export async function POST(req: NextRequest) {
       caption: caption || null,
     })
     .eq('id', postId)
-    .eq('user_id', session.user.id);
+    .eq('user_id', userId);
 
   if (updateError) {
     return NextResponse.json({ error: updateError.message }, { status: 500 });

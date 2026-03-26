@@ -330,7 +330,11 @@ export default function SettingsPage() {
               <button 
                 onClick={async () => {
                   setDisconnecting(true);
-                  await fetch('/api/instagram/disconnect', { method: 'POST' });
+                  await fetch('/api/instagram/disconnect', { 
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId: user?.id })
+                  });
                   setInstagramConnected(false);
                   setInstagramHandle(null);
                   setDisconnecting(false);
@@ -343,7 +347,10 @@ export default function SettingsPage() {
             </div>
           ) : (
             <button
-              onClick={() => window.location.href = '/api/instagram/connect'}
+              onClick={() => {
+                if (!user?.id) return alert('Please log in first.');
+                window.location.href = `/api/instagram/connect?userId=${user.id}`;
+              }}
               className="flex items-center gap-5 w-full p-6 rounded-[24px] border-2 border-transparent bg-white/50 hover:bg-white hover:border-white hover:shadow-clayCard cursor-pointer transition-all group"
             >
               <div className="w-14 h-14 rounded-[18px] bg-gradient-to-br from-pink-500 via-red-500 to-yellow-500 flex items-center justify-center flex-shrink-0 shadow-sm group-hover:scale-105 transition-transform">

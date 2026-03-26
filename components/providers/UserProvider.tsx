@@ -3,6 +3,7 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import { createClientBrowser } from "@/utils/supabase/client";
 
 export interface UserData {
+  id?: string;
   name: string;
   email: string;
   company: string;
@@ -18,6 +19,7 @@ interface UserContextType {
 }
 
 const defaultUser: UserData = {
+  id: undefined,
   name: "Alex Johnson",
   email: "alex@company.com",
   company: "TechFlow Inc.",
@@ -42,6 +44,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
       if (data) {
         const row = data as any;
         setUserState({
+          id: userId,
           name: row.name || defaultUser.name,
           email: row.email || defaultUser.email,
           company: row.company || defaultUser.company,

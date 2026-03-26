@@ -1,27 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClientServer } from '@/utils/supabase/server';
-import { createClient } from '@supabase/supabase-js';
-
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+import { createAdminClient } from '@/utils/supabase/admin';
 
 export async function GET(req: NextRequest) {
-  const supabase = await createClientServer();
-  const { data: { session } } = await supabase.auth.getSession();
-
-  if (!session) {
-    return NextResponse.redirect(new URL('/login', req.url));
-  }
-
   const code = req.nextUrl.searchParams.get('code');
   const error = req.nextUrl.searchParams.get('error');
+  const state = req.nextUrl.searchParams.get('state'); // Contains userId
 
-  if (error || !code) {
+  if (error || !code || !state) {
     return NextResponse.redirect(new URL('/settings?instagram=error', req.url));
   }
 
+  const userId = state;
   const appId = process.env.INSTAGRAM_APP_ID!;
   const appSecret = process.env.INSTAGRAM_APP_SECRET!;
   const redirectUri = `${process.env.NEXT_PUBLIC_APP_URL}/api/instagram/callback`;
@@ -62,7 +51,8 @@ export async function GET(req: NextRequest) {
 
   // Step 4: Save token + IG user ID to Supabase brands table
   const expiresAt = new Date(Date.now() + (longLivedData.expires_in || 5184000) * 1000).toISOString();
-
+  
+  const supabaseAdmin = createAdminClient();
   await supabaseAdmin
     .from('brands')
     .update({
@@ -70,7 +60,7 @@ export async function GET(req: NextRequest) {
       instagram_user_id: instagramUserId,
       instagram_token_expires_at: expiresAt
     })
-    .eq('user_id', session.user.id);
+    .eq('user_id', userId);
 
   return NextResponse.redirect(new URL('/settings?instagram=connected', req.url));
 }
