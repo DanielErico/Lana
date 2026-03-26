@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Card from "@/components/ui/Card";
 import Badge from "@/components/ui/Badge";
@@ -47,6 +47,27 @@ export default function SettingsPage() {
   const [dbSnapshot, setDbSnapshot] = useState<{name?: string; website?: string; role?: string} | null>(null);
   const [show2FASetup, setShow2FASetup] = useState(false);
   const [instagramConnected, setInstagramConnected] = useState(false);
+  const [instagramHandle, setInstagramHandle] = useState<string | null>(null);
+  const [disconnecting, setDisconnecting] = useState(false);
+
+  // Check query params for OAuth result
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('instagram') === 'connected') {
+      setInstagramConnected(true);
+      setActiveTab('Instagram');
+    } else if (params.get('instagram') === 'error') {
+      setActiveTab('Instagram');
+    }
+  }, []);
+
+  // Check brand for existing Instagram connection
+  useEffect(() => {
+    if ((brand as any).instagram_user_id) {
+      setInstagramConnected(true);
+      setInstagramHandle(`@${brand.logo.text?.toLowerCase().replace(/\s+/g, '') || 'connected'}`);
+    }
+  }, [brand]);
 
   const handleSave = async () => {
     setSaving(true);
@@ -303,14 +324,26 @@ export default function SettingsPage() {
                 </svg>
               </div>
               <div className="flex-1">
-                <p className="font-black text-clay-foreground text-lg">@alexjohnson_brand</p>
+                <p className="font-black text-clay-foreground text-lg">{instagramHandle || '@connected'}</p>
                 <p className="text-xs font-black text-emerald-600 uppercase tracking-widest mt-1">Connected · Auto-publishing active</p>
               </div>
-              <button onClick={() => setInstagramConnected(false)} className="text-xs font-black text-red-500 hover:text-red-700 uppercase tracking-widest cursor-pointer transition-colors">Disconnect</button>
+              <button 
+                onClick={async () => {
+                  setDisconnecting(true);
+                  await fetch('/api/instagram/disconnect', { method: 'POST' });
+                  setInstagramConnected(false);
+                  setInstagramHandle(null);
+                  setDisconnecting(false);
+                }} 
+                disabled={disconnecting}
+                className="text-xs font-black text-red-500 hover:text-red-700 uppercase tracking-widest cursor-pointer transition-colors disabled:opacity-50"
+              >
+                {disconnecting ? 'Disconnecting…' : 'Disconnect'}
+              </button>
             </div>
           ) : (
             <button
-              onClick={() => setInstagramConnected(true)}
+              onClick={() => window.location.href = '/api/instagram/connect'}
               className="flex items-center gap-5 w-full p-6 rounded-[24px] border-2 border-transparent bg-white/50 hover:bg-white hover:border-white hover:shadow-clayCard cursor-pointer transition-all group"
             >
               <div className="w-14 h-14 rounded-[18px] bg-gradient-to-br from-pink-500 via-red-500 to-yellow-500 flex items-center justify-center flex-shrink-0 shadow-sm group-hover:scale-105 transition-transform">
