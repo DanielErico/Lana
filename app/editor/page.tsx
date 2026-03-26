@@ -1,5 +1,5 @@
 "use client";
-import { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Card from "@/components/ui/Card";
 import Badge from "@/components/ui/Badge";
@@ -73,7 +73,7 @@ const initialSlides: RimberioSlideData[] = [
   }
 ];
 
-export default function EditorPage() {
+function EditorContent() {
   const searchParams = useSearchParams();
   const postId = searchParams.get('postId');
 
@@ -399,5 +399,13 @@ export default function EditorPage() {
         </div>
       )}
     </div>
+  );
+}
+
+function EditorContent() {
+  return (
+    <Suspense fallback={<div className="flex h-screen w-full items-center justify-center bg-slate-50 relative z-50 text-clay-muted font-bold tracking-widest uppercase">Loading editor...</div>}>
+      <EditorContent />
+    </Suspense>
   );
 }
