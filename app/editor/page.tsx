@@ -4,6 +4,7 @@ import { useSearchParams } from "next/navigation";
 import Card from "@/components/ui/Card";
 import Badge from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
+import { createClientBrowser } from "@/utils/supabase/client";
 
 import { RimberioSlideData, RimberioBrand } from '@/components/templates/rimberio/schema';
 import SlidePreview from '@/components/templates/rimberio/SlidePreview';
@@ -128,10 +129,30 @@ function EditorContent() {
 
   const genAI = async (type: string) => {
     setGeneratingAI(type);
-    await new Promise(r => setTimeout(r, 1800));
+    
     if (type === "caption") {
-      setCaption("🤖 We tested 50+ AI tools so you don't have to. Here are the 5 that actually saved us time and money.\n\n📌 Save for later\n💬 Comment your favorite!\n\n#AITools #ProductivityHacks #WorkSmarter #Automation #StartupLife");
+      try {
+        const supabase = createClientBrowser();
+        const { data: { session } } = await supabase.auth.getSession();
+        const userId = session?.user?.id;
+        
+        const res = await fetch('/api/posts/caption', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ slides, userId })
+        });
+        
+        const data = await res.json();
+        if (data.caption) {
+          setCaption(data.caption);
+        } else {
+          console.error(data.error);
+        }
+      } catch (err) {
+        console.error("Failed to generate caption:", err);
+      }
     }
+    
     setGeneratingAI(null);
   };
 
