@@ -19,6 +19,7 @@ export interface RimberioBrand {
     mission?: string;
   };
   fontFamily?: string;
+  instagram_user_id?: string;
 }
 
 export interface RimberioSlideData {

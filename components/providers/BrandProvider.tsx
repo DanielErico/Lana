@@ -35,6 +35,7 @@ export function BrandProvider({ children }: { children: ReactNode }) {
           website: row.website || undefined,
           info: row.info || undefined,
           fontFamily: row.info?.fontFamily || undefined,
+          instagram_user_id: row.instagram_user_id || undefined,
         });
       }
       setIsLoaded(true);
