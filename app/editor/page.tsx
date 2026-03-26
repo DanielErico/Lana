@@ -402,7 +402,7 @@ function EditorContent() {
   );
 }
 
-function EditorContent() {
+export default function EditorPage() {
   return (
     <Suspense fallback={<div className="flex h-screen w-full items-center justify-center bg-slate-50 relative z-50 text-clay-muted font-bold tracking-widest uppercase">Loading editor...</div>}>
       <EditorContent />
