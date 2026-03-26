@@ -9,7 +9,8 @@ export async function GET(req: NextRequest) {
   }
 
   const appId = process.env.INSTAGRAM_APP_ID!;
-  const redirectUri = encodeURIComponent(`${process.env.NEXT_PUBLIC_APP_URL}/api/instagram/callback`);
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, '') || 'https://lana-five.vercel.app';
+  const redirectUri = encodeURIComponent(`${appUrl}/api/instagram/callback`);
   const scope = encodeURIComponent('instagram_basic,instagram_content_publish,pages_show_list,pages_read_engagement');
   
   // Pass userId in the state parameter so we get it back in the callback

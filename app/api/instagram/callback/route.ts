@@ -13,7 +13,8 @@ export async function GET(req: NextRequest) {
   const userId = state;
   const appId = process.env.INSTAGRAM_APP_ID!;
   const appSecret = process.env.INSTAGRAM_APP_SECRET!;
-  const redirectUri = `${process.env.NEXT_PUBLIC_APP_URL}/api/instagram/callback`;
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, '') || 'https://lana-five.vercel.app';
+  const redirectUri = `${appUrl}/api/instagram/callback`;
 
   // Step 1: Exchange code for short-lived token
   const tokenRes = await fetch(
