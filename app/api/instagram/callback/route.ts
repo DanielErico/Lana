@@ -7,7 +7,7 @@ export async function GET(req: NextRequest) {
   const state = req.nextUrl.searchParams.get('state'); // Contains userId
 
   if (error || !code || !state) {
-    return NextResponse.redirect(new URL('/settings?instagram=error', req.url));
+    return NextResponse.redirect(new URL(`/settings?instagram=error&reason=${encodeURIComponent(error || 'missing_params')}`, req.url));
   }
 
   const userId = state;
@@ -22,8 +22,8 @@ export async function GET(req: NextRequest) {
   const tokenData = await tokenRes.json();
 
   if (!tokenData.access_token) {
-    console.error('Token exchange failed:', tokenData);
-    return NextResponse.redirect(new URL('/settings?instagram=error', req.url));
+    const errorMsg = tokenData.error?.message || tokenData.error?.type || 'token_exchange_failed';
+    return NextResponse.redirect(new URL(`/settings?instagram=error&reason=${encodeURIComponent(errorMsg)}`, req.url));
   }
 
   // Step 2: Exchange for long-lived token (60 days)
