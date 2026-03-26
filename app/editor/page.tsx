@@ -8,12 +8,13 @@ import { createClientBrowser } from "@/utils/supabase/client";
 
 import { RimberioSlideData, RimberioBrand } from '@/components/templates/rimberio/schema';
 import SlidePreview from '@/components/templates/rimberio/SlidePreview';
+import MinimalistPreview from '@/components/templates/minimalist/MinimalistPreview';
 import { useBrand } from '@/components/providers/BrandProvider';
 import { useRouter } from 'next/navigation';
 
 const templates = [
-  { id: "rimberio", name: "Rimberio Theme", type: "Tech SaaS", slides: 5 },
-  // Future templates will go here
+  { id: "rimberio", name: "Rimberio Theme", type: "Tech SaaS" },
+  { id: "minimalist", name: "Minimalist Branding", type: "Classic Designer" },
 ];
 
 const defaultBrand: RimberioBrand = {
@@ -79,6 +80,7 @@ function EditorContent() {
   const postId = searchParams.get('postId');
 
   const [slides, setSlides] = useState<RimberioSlideData[]>(initialSlides);
+  const [templateId, setTemplateId] = useState("rimberio");
   const [loadingPost, setLoadingPost] = useState(!!postId);
   const [postTitle, setPostTitle] = useState<string | null>(null);
   const [activeSlide, setActiveSlide] = useState(0);
@@ -197,7 +199,11 @@ function EditorContent() {
                 }}
               >
                 <div style={{ width: 1080, height: 1080 }}>
-                  <SlidePreview slide={slide} brand={brand} />
+                  {templateId === 'rimberio' ? (
+                    <SlidePreview slide={slide} brand={brand} />
+                  ) : (
+                    <MinimalistPreview slide={slide} brand={brand} />
+                  )}
                 </div>
               </div>
               <div className="absolute inset-0 p-2 flex flex-col justify-between pointer-events-none z-20">
@@ -253,7 +259,11 @@ function EditorContent() {
                   }}
                 >
                   <div className="canvas-inner" style={{ width: 1080, height: 1080 }}>
-                    <SlidePreview slide={currentSlide} brand={brand} />
+                    {templateId === 'rimberio' ? (
+                      <SlidePreview slide={currentSlide} brand={brand} />
+                    ) : (
+                      <MinimalistPreview slide={currentSlide} brand={brand} />
+                    )}
                   </div>
                 </div>
               </div>
@@ -276,11 +286,17 @@ function EditorContent() {
                 <p className="text-sm font-black text-clay-muted mb-4 uppercase tracking-widest">Choose Template</p>
                 <div className="grid grid-cols-2 gap-3">
                   {templates.map(t => (
-                    <div key={t.id} className={`aspect-square rounded-[20px] bg-white border-2 border-clay-accent cursor-pointer hover:ring-4 hover:ring-clay-accent/30 hover:scale-105 shadow-clayCard transition-all relative overflow-hidden group flex flex-col items-center justify-center p-4 text-center`}>
-                      <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 to-orange-500/5 group-hover:opacity-100 transition-opacity"/>
-                      <span className="text-[32px] mb-2">✨</span>
-                      <p className="text-clay-foreground text-sm font-black tracking-tight leading-tight relative">{t.name}</p>
-                      <p className="text-clay-muted text-[10px] uppercase font-bold tracking-widest mt-1 relative">{t.slides} slides</p>
+                    <div 
+                      key={t.id} 
+                      onClick={() => setTemplateId(t.id)}
+                      className={`aspect-square rounded-[20px] bg-white border-2 cursor-pointer hover:ring-4 hover:ring-clay-accent/30 hover:scale-105 shadow-clayCard transition-all relative overflow-hidden group flex flex-col items-center justify-center p-4 text-center ${
+                        templateId === t.id ? 'border-clay-accent ring-4 ring-clay-accent/10 scale-105 shadow-clayDeep' : 'border-slate-100'
+                      }`}
+                    >
+                      <div className={`absolute inset-0 bg-gradient-to-br from-orange-500/10 to-orange-500/5 transition-opacity ${templateId === t.id ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}/>
+                      <span className="text-[32px] mb-2">{t.id === 'rimberio' ? '🚀' : '✨'}</span>
+                      <p className={`text-sm font-black tracking-tight leading-tight relative ${templateId === t.id ? 'text-clay-accent' : 'text-clay-foreground'}`}>{t.name}</p>
+                      <p className="text-clay-muted text-[10px] uppercase font-bold tracking-widest mt-1 relative">{t.type}</p>
                     </div>
                   ))}
                 </div>
