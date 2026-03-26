@@ -11,7 +11,7 @@ const supabaseAdmin = createClient(
  * Also callable manually for testing.
  */
 export async function POST(req: NextRequest) {
-  const { postId, templateId = 'rimberio' } = await req.json();
+  const { postId, templateId = 'rimberio', caption } = await req.json();
   if (!postId) return NextResponse.json({ error: 'postId required' }, { status: 400 });
 
   // 1. Load post and brand (with Instagram token)
@@ -75,7 +75,7 @@ export async function POST(req: NextRequest) {
   }
 
   // 4. Create the carousel container
-  const caption: string = post.caption || '';
+  const finalCaption: string = caption || post.caption || '';
   const carouselRes = await fetch(
     `https://graph.facebook.com/v19.0/${igUserId}/media`,
     {
@@ -84,7 +84,7 @@ export async function POST(req: NextRequest) {
       body: JSON.stringify({
         media_type: 'CAROUSEL',
         children: containerIds,
-        caption,
+        caption: finalCaption,
         access_token: igToken
       })
     }

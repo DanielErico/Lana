@@ -185,6 +185,30 @@ function EditorContent() {
     }
   };
 
+  const [publishing, setPublishing] = useState(false);
+  const handlePublishNow = async () => {
+    if (!postId) return;
+    setPublishing(true);
+    try {
+      const res = await fetch('/api/posts/publish', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ postId, templateId, caption })
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        alert('Published successfully! Check your Instagram.');
+      } else {
+        alert(`Publish failed: ${data.error || data.detail?.error?.message || 'Unknown error'}`);
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Network error while publishing');
+    } finally {
+      setPublishing(false);
+    }
+  };
+
   return (
     <div className="flex flex-col h-screen w-full relative z-10 font-sans animate-fade-in bg-transparent overflow-hidden">
       {/* Top toolbar */}
@@ -445,6 +469,16 @@ function EditorContent() {
                         disabled={!scheduleDate || !scheduleTime || !postId}
                       >
                         {scheduling ? 'Scheduling...' : 'Schedule Post'}
+                      </Button>
+                      <Button
+                        variant="secondary"
+                        size="md"
+                        className="w-full font-black mt-2 flex justify-center bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border-indigo-200 shadow-sm"
+                        onClick={handlePublishNow}
+                        loading={publishing}
+                        disabled={!postId}
+                      >
+                        {publishing ? 'Publishing directly...' : 'Publish Now (Test)'}
                       </Button>
                       {scheduleSuccess && (
                         <div className="p-3 bg-emerald-100 rounded-xl text-emerald-700 text-xs font-black text-center uppercase tracking-widest">

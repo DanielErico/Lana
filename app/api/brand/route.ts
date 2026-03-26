@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
   const admin = createAdminClient();
   const [{ data: profile, error: pe }, { data: brand, error: be }] = await Promise.all([
     admin.from('profiles').select('name,email,role,company').eq('id', userId).maybeSingle(),
-    admin.from('brands').select('logo,colors,website,info').eq('user_id', userId).maybeSingle(),
+    admin.from('brands').select('logo,colors,website,info,instagram_user_id').eq('user_id', userId).maybeSingle(),
   ]);
 
   if (pe || be) return NextResponse.json({ error: pe?.message || be?.message }, { status: 500 });
