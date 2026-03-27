@@ -39,15 +39,22 @@ export async function GET(req: NextRequest) {
     `https://graph.facebook.com/v19.0/me/accounts?access_token=${longLivedToken}`
   );
   const pagesData = await pagesRes.json();
-  const page = pagesData.data?.[0];
+  const pages = pagesData.data || [];
 
   let instagramUserId: string | null = null;
-  if (page) {
+  let linkedPageName: string | null = null;
+
+  // Iterate through ALL pages to find one with an Instagram Business Account
+  for (const page of pages) {
     const igRes = await fetch(
-      `https://graph.facebook.com/v19.0/${page.id}?fields=instagram_business_account&access_token=${page.access_token}`
+      `https://graph.facebook.com/v19.0/${page.id}?fields=instagram_business_account&access_token=${page.access_token || longLivedToken}`
     );
     const igData = await igRes.json();
-    instagramUserId = igData.instagram_business_account?.id || null;
+    if (igData.instagram_business_account?.id) {
+      instagramUserId = igData.instagram_business_account.id;
+      linkedPageName = page.name || null;
+      break;
+    }
   }
 
   // Step 4: Save token + IG user ID to Supabase brands table
@@ -63,5 +70,12 @@ export async function GET(req: NextRequest) {
     })
     .eq('user_id', userId);
 
-  return NextResponse.redirect(new URL('/settings?instagram=connected', req.url));
+  // Provide debug info in the redirect so user can see what happened
+  if (instagramUserId) {
+    return NextResponse.redirect(new URL(`/settings?instagram=connected&ig_id=${instagramUserId}`, req.url));
+  } else {
+    // Token saved but no IG business account found
+    const debugInfo = `pages_found=${pages.length}&page_names=${encodeURIComponent(pages.map((p: any) => p.name).join(','))}`;
+    return NextResponse.redirect(new URL(`/settings?instagram=partial&${debugInfo}`, req.url));
+  }
 }
