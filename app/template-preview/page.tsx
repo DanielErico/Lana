@@ -34,10 +34,15 @@ function SlideRenderer() {
           // Fetch brand for colors and logo
           if (data.post.user_id) {
             const supabase = createClientBrowser();
-            const { data } = await supabase.from('brands').select('*').eq('user_id', data.post.user_id).single();
-            if (data) {
-              const brandData = data as any;
+            const brandRes = await supabase.from('brands').select('*').eq('user_id', data.post.user_id).single();
+            if (brandRes.data) {
+              const brandData = brandRes.data as any;
               setBrand({ 
+                colors: brandData.colors || defaultBrand.colors,
+                logo: brandData.logo || defaultBrand.logo,
+                fontFamily: brandData.fontFamily
+              });
+            }
                 colors: brandData.colors || defaultBrand.colors,
                 logo: brandData.logo || defaultBrand.logo,
                 fontFamily: brandData.fontFamily
