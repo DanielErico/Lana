@@ -33,6 +33,8 @@ export default function CalendarPage() {
   const [showModal, setShowModal] = useState(false);
   const [clearing, setClearing] = useState(false);
   const [previewPost, setPreviewPost] = useState<Post | null>(null);
+  const [scheduling, setScheduling] = useState(false);
+  const [scheduleProgress, setScheduleProgress] = useState({ done: 0, total: 0 });
 
   const { brand } = useBrand();
 
@@ -112,6 +114,62 @@ export default function CalendarPage() {
     setClearing(false);
   };
 
+  const handleAutoSchedule = async () => {
+    const draftPosts = posts.filter(p => p.status === 'draft');
+    if (draftPosts.length === 0) {
+      alert('No draft posts to schedule. Generate a plan first!');
+      return;
+    }
+    if (!confirm(`Schedule ${draftPosts.length} draft post${draftPosts.length > 1 ? 's' : ''} for automatic publishing?`)) return;
+
+    setScheduling(true);
+    setScheduleProgress({ done: 0, total: draftPosts.length });
+
+    const supabase = createClientBrowser();
+    const { data: { session } } = await supabase.auth.getSession();
+    const userId = session?.user?.id;
+    if (!userId) { alert('Please log in first.'); setScheduling(false); return; }
+
+    let succeeded = 0;
+    let failed = 0;
+
+    for (const post of draftPosts) {
+      try {
+        const res = await fetch('/api/posts/schedule', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            postId: post.id,
+            scheduledAt: post.scheduled_for,
+            templateId: 'rimberio',
+            caption: (post as any).caption || null,
+            userId,
+          }),
+        });
+        if (res.ok) {
+          succeeded++;
+          // Update local state immediately
+          setPosts(prev => prev.map(p => p.id === post.id ? { ...p, status: 'scheduled' } : p));
+        } else {
+          failed++;
+          const err = await res.json();
+          console.error(`Failed to schedule "${post.title}":`, err.error);
+        }
+      } catch (err) {
+        failed++;
+        console.error(`Network error scheduling "${post.title}":`, err);
+      }
+      setScheduleProgress(prev => ({ ...prev, done: prev.done + 1 }));
+    }
+
+    setScheduling(false);
+    if (failed === 0) {
+      alert(`✅ All ${succeeded} posts scheduled! They'll publish automatically at their planned times.`);
+    } else {
+      alert(`Scheduled ${succeeded} posts. ${failed} failed — check console for details.`);
+    }
+  };
+
   const openModal = () => {
     setStep('dateMode');
     setDateMode(null);
@@ -153,7 +211,26 @@ export default function CalendarPage() {
             <p className="text-clay-muted font-bold text-xs sm:text-sm mt-2 uppercase tracking-widest">March 2026 · {posts.length} plan{posts.length !== 1 ? 's' : ''} generated</p>
           </div>
         </div>
-        <div className="flex gap-3 w-full sm:w-auto">
+        <div className="flex gap-3 w-full sm:w-auto flex-wrap">
+          {posts.filter(p => p.status === 'draft').length > 0 && (
+            <button
+              onClick={handleAutoSchedule}
+              disabled={scheduling}
+              className="flex items-center gap-2 bg-gradient-to-br from-emerald-500 to-teal-600 text-white px-4 py-3 rounded-[20px] text-sm font-black cursor-pointer hover:-translate-y-0.5 hover:shadow-clayButton transition-all shadow-sm disabled:opacity-60 disabled:cursor-wait"
+            >
+              {scheduling ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"/>
+                  {scheduleProgress.done}/{scheduleProgress.total}
+                </>
+              ) : (
+                <>
+                  <svg width="16" height="16" fill="none" stroke="white" strokeWidth="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2" strokeLinecap="round"/></svg>
+                  Auto-Schedule Drafts
+                </>
+              )}
+            </button>
+          )}
           {posts.length > 0 && (
             <button
               onClick={handleClear}
