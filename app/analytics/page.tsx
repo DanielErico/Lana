@@ -39,14 +39,14 @@ export default function AnalyticsPage() {
 
   return (
     <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 lg:py-12 space-y-8 animate-fade-in relative z-10">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div className="flex items-center gap-4">
           <button onClick={() => router.back()} className="p-3 bg-white/60 border border-white hover:bg-white rounded-[20px] transition-colors text-clay-muted shadow-sm hover:shadow-clayCard">
             <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6" strokeLinecap="round" strokeLinejoin="round"/></svg>
           </button>
           <div>
-            <h1 className="font-black text-4xl text-clay-foreground tracking-tight drop-shadow-sm">Analytics</h1>
-            <p className="text-clay-muted font-bold text-sm mt-2 uppercase tracking-widest">Track your Instagram performance</p>
+            <h1 className="font-black text-2xl sm:text-4xl text-clay-foreground tracking-tight drop-shadow-sm">Analytics</h1>
+            <p className="text-clay-muted font-bold text-xs sm:text-sm mt-2 uppercase tracking-widest">Track your Instagram performance</p>
           </div>
         </div>
         <div className="flex gap-2 bg-white/60 backdrop-blur-md p-1.5 rounded-[20px] border border-white shadow-sm">
@@ -57,7 +57,7 @@ export default function AnalyticsPage() {
       </div>
 
       {/* KPI row */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
         {kpis.map(k => (
           <div key={k.label} className="bg-white/70 backdrop-blur-xl rounded-[32px] border border-white shadow-clayCard p-7 hover:shadow-clayCardHover hover:-translate-y-1 transition-all duration-300 group">
             <div className={`w-12 h-12 rounded-[16px] ${k.bg} ${k.color} flex items-center justify-center mb-5 shadow-sm group-hover:scale-105 transition-transform`}>
@@ -83,7 +83,7 @@ export default function AnalyticsPage() {
 
       {/* Charts row */}
       <div className="grid lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 bg-white/70 backdrop-blur-xl rounded-[40px] border border-white shadow-clayCard p-8">
+        <div className="lg:col-span-2 bg-white/70 backdrop-blur-xl rounded-[40px] border border-white shadow-clayCard p-5 sm:p-8">
           <div className="flex items-center justify-between mb-6">
             <h3 className="font-black text-xl text-clay-foreground tracking-tight drop-shadow-sm">Engagement Rate</h3>
             <Badge variant="success" dot>Live data</Badge>
@@ -94,7 +94,7 @@ export default function AnalyticsPage() {
           </div>
         </div>
 
-        <div className="bg-white/70 backdrop-blur-xl rounded-[40px] border border-white shadow-clayCard p-8">
+        <div className="bg-white/70 backdrop-blur-xl rounded-[40px] border border-white shadow-clayCard p-5 sm:p-8">
           <h3 className="font-black text-xl text-clay-foreground tracking-tight drop-shadow-sm mb-6">By Post Type</h3>
           <div className="space-y-5">
             {[
@@ -167,7 +167,7 @@ export default function AnalyticsPage() {
       </div>
 
       {/* Top posts table */}
-      <div className="bg-white/70 backdrop-blur-xl rounded-[40px] border border-white shadow-clayCard p-8">
+      <div className="bg-white/70 backdrop-blur-xl rounded-[40px] border border-white shadow-clayCard p-5 sm:p-8">
         <div className="flex items-center justify-between mb-6">
           <h3 className="font-black text-xl text-clay-foreground tracking-tight drop-shadow-sm">Best Performing Posts</h3>
           <Badge variant="info">AI Scored</Badge>

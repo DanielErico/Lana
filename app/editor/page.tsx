@@ -212,33 +212,33 @@ function EditorContent() {
   return (
     <div className="flex flex-col h-screen w-full relative z-10 font-sans animate-fade-in bg-transparent overflow-hidden">
       {/* Top toolbar */}
-      <div className="h-16 bg-white/60 backdrop-blur-xl border-b border-white shadow-sm flex items-center justify-between px-6 flex-shrink-0 z-20 relative">
-        <div className="flex items-center gap-4">
-          <button onClick={() => router.back()} className="p-2 -ml-2 rounded-full hover:bg-white/60 transition-colors text-clay-muted hover:text-clay-foreground" title="Go Back">
+      <div className="h-14 sm:h-16 bg-white/60 backdrop-blur-xl border-b border-white shadow-sm flex items-center justify-between px-3 sm:px-6 flex-shrink-0 z-20 relative">
+        <div className="flex items-center gap-2 sm:gap-4 min-w-0">
+          <button onClick={() => router.back()} className="p-2 -ml-1 rounded-full hover:bg-white/60 transition-colors text-clay-muted hover:text-clay-foreground flex-shrink-0" title="Go Back">
             <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6" strokeLinecap="round" strokeLinejoin="round"/></svg>
           </button>
-          <div className="flex items-center gap-3">
-            <h1 className="font-black text-clay-foreground text-lg tracking-wide uppercase drop-shadow-sm">
+          <div className="flex items-center gap-2 min-w-0">
+            <h1 className="font-black text-clay-foreground text-sm sm:text-lg tracking-wide uppercase drop-shadow-sm truncate">
               {loadingPost ? "Loading..." : (postTitle || "Carousel Editor")}
             </h1>
-            {!postTitle && <Badge variant="warning" size="sm" className="shadow-sm">v2.0</Badge>}
+            {!postTitle && <Badge variant="warning" size="sm" className="shadow-sm hidden sm:inline-flex">v2.0</Badge>}
           </div>
         </div>
-        <div className="flex items-center gap-3">
-          <Button variant="secondary" size="md" className="bg-white/80 border-white shadow-sm font-bold">Save Draft</Button>
-          <Button variant="primary" size="md" className="shadow-clayButton font-black" onClick={() => setActiveTab('publish')}>Schedule Post</Button>
+        <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+          <Button variant="secondary" size="sm" className="bg-white/80 border-white shadow-sm font-bold hidden sm:flex">Save Draft</Button>
+          <Button variant="primary" size="sm" className="shadow-clayButton font-black text-xs sm:text-sm" onClick={() => setActiveTab('publish')}>Schedule</Button>
         </div>
       </div>
 
       <div className="flex-1 flex flex-col lg:grid lg:grid-cols-[250px_1fr_300px] overflow-hidden relative min-h-0">
         {/* Left: Slide list */}
-        <div className="w-full lg:w-[250px] flex-shrink-0 lg:flex-shrink bg-white/40 backdrop-blur-md border-b lg:border-b-0 lg:border-r border-white shadow-sm overflow-x-auto lg:overflow-x-hidden lg:overflow-y-auto p-4 flex lg:flex-col gap-3 z-10 relative">
+        <div className="w-full lg:w-[250px] flex-shrink-0 lg:flex-shrink bg-white/40 backdrop-blur-md border-b lg:border-b-0 lg:border-r border-white shadow-sm overflow-x-auto lg:overflow-x-hidden lg:overflow-y-auto p-2 sm:p-4 flex lg:flex-col gap-2 sm:gap-3 z-10 relative">
           {slides.map((slide, i) => (
             <div
               key={slide.id}
               onClick={() => setActiveSlide(i)}
-              className={`relative rounded-[20px] overflow-hidden aspect-square cursor-pointer transition-all shadow-sm flex items-center justify-center bg-white shrink-0 ${i === activeSlide ? "ring-4 ring-clay-accent shadow-clayCard scale-105" : "hover:ring-4 hover:ring-white/80 hover:shadow-clayCardHover"}`}
-              style={{ width: 100, height: 100 }}
+              className={`relative rounded-[14px] sm:rounded-[20px] overflow-hidden aspect-square cursor-pointer transition-all shadow-sm flex items-center justify-center bg-white shrink-0 ${i === activeSlide ? "ring-3 sm:ring-4 ring-clay-accent shadow-clayCard scale-105" : "hover:ring-4 hover:ring-white/80 hover:shadow-clayCardHover"}`}
+              style={{ width: 'clamp(70px, 18vw, 100px)', height: 'clamp(70px, 18vw, 100px)' }}
             >
               <div
                 className="absolute top-0 left-0"
@@ -271,7 +271,8 @@ function EditorContent() {
               cta: "Next",
               hasImage: false
             }])}
-            className="w-[100px] lg:w-full shrink-0 aspect-square rounded-[20px] bg-white/50 border-2 border-dashed border-white hover:border-clay-accent hover:bg-white hover:shadow-clayCard flex items-center justify-center cursor-pointer transition-all group"
+            className="shrink-0 aspect-square rounded-[14px] sm:rounded-[20px] bg-white/50 border-2 border-dashed border-white hover:border-clay-accent hover:bg-white hover:shadow-clayCard flex items-center justify-center cursor-pointer transition-all group"
+            style={{ width: 'clamp(70px, 18vw, 100px)', height: 'clamp(70px, 18vw, 100px)' }}
           >
             <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24" className="text-clay-muted group-hover:text-clay-accent transition-colors group-hover:scale-110">
               <path d="M12 5v14M5 12h14" strokeLinecap="round"/>
@@ -280,7 +281,7 @@ function EditorContent() {
         </div>
 
         {/* Center: Canvas */}
-        <div className="flex-1 flex items-center justify-center p-4 lg:p-8 overflow-hidden relative min-w-0 h-full">
+        <div className="flex-1 flex items-center justify-center p-2 sm:p-4 lg:p-8 overflow-hidden relative min-w-0 h-full">
           <div className="relative flex flex-col items-center justify-center h-full w-full">
             <div className="absolute top-4 left-1/2 -translate-x-1/2 flex items-center gap-4 bg-white/60 backdrop-blur-xl border border-white px-4 py-2 rounded-full shadow-clayButton z-20">
               <button onClick={() => setActiveSlide(Math.max(0, activeSlide - 1))} disabled={activeSlide === 0} className="w-8 h-8 rounded-full bg-white text-clay-muted border border-white flex items-center justify-center cursor-pointer hover:bg-white/80 hover:text-clay-foreground hover:shadow-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed">
@@ -319,7 +320,7 @@ function EditorContent() {
         </div>
 
         {/* Right: Control panel */}
-        <div className="w-full lg:w-[300px] flex-shrink-0 min-w-[300px] lg:h-full bg-white/40 backdrop-blur-md border-t lg:border-t-0 lg:border-l border-white shadow-sm overflow-y-auto flex flex-col z-10 relative max-h-[40vh] lg:max-h-full">
+        <div className="w-full lg:w-[300px] flex-shrink-0 min-w-0 lg:min-w-[300px] lg:h-full bg-white/40 backdrop-blur-md border-t lg:border-t-0 lg:border-l border-white shadow-sm overflow-y-auto flex flex-col z-10 relative max-h-[35vh] lg:max-h-full">
           <div className="flex border-b border-white/40 p-2 gap-2">
             {["template","design","content","publish"].map(tab => (
               <button key={tab} onClick={() => setActiveTab(tab)} className={`flex-1 py-2.5 rounded-[16px] text-xs font-black capitalize cursor-pointer transition-all ${activeTab === tab ? "bg-white text-clay-accent shadow-clayPressed" : "text-clay-muted hover:text-clay-foreground hover:bg-white/60"}`}>{tab}</button>

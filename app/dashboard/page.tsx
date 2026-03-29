@@ -83,13 +83,13 @@ export default function DashboardPage() {
   return (
     <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 lg:py-12 space-y-8 animate-fade-in relative z-10">
       {/* Header */}
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
         <div>
-          <h1 className="font-black text-4xl text-clay-foreground tracking-tight mb-2 drop-shadow-sm">Good morning, {firstName} 👋</h1>
-          <p className="text-clay-muted font-bold text-base tracking-wide">Here&apos;s what&apos;s happening with your Instagram today.</p>
+          <h1 className="font-black text-2xl sm:text-4xl text-clay-foreground tracking-tight mb-2 drop-shadow-sm">Good morning, {firstName} 👋</h1>
+          <p className="text-clay-muted font-bold text-sm sm:text-base tracking-wide">Here&apos;s what&apos;s happening with your Instagram today.</p>
         </div>
-        <Link href="/editor">
-          <button className="flex items-center gap-2.5 bg-gradient-to-br from-indigo-500 to-purple-600 text-white px-6 py-3 rounded-[20px] text-sm font-black cursor-pointer hover:-translate-y-1 transition-transform shadow-clayButton">
+        <Link href="/editor" className="w-full sm:w-auto">
+          <button className="w-full sm:w-auto flex items-center justify-center gap-2.5 bg-gradient-to-br from-indigo-500 to-purple-600 text-white px-6 py-3 rounded-[20px] text-sm font-black cursor-pointer hover:-translate-y-1 transition-transform shadow-clayButton">
             <svg width="18" height="18" fill="none" stroke="white" strokeWidth="3" viewBox="0 0 24 24">
               <path d="M12 5v14M5 12h14" strokeLinecap="round"/>
             </svg>
@@ -99,7 +99,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Stats row */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         {stats.map((s) => (
           <Card key={s.label} variant="glass" padding="lg" hover={true}>
             <div className="flex items-start justify-between mb-4">
@@ -114,7 +114,7 @@ export default function DashboardPage() {
                 </span>
               )}
             </div>
-            <div className={`font-black tracking-tight text-3xl ${s.color} mb-1 drop-shadow-sm`}>{s.value}</div>
+            <div className={`font-black tracking-tight text-2xl sm:text-3xl ${s.color} mb-1 drop-shadow-sm`}>{s.value}</div>
             <div className="text-sm text-clay-muted font-bold tracking-wide">{s.label}</div>
             <div className="text-xs font-bold text-clay-muted/70 mt-2 uppercase tracking-widest">{s.change}</div>
           </Card>
@@ -208,7 +208,7 @@ export default function DashboardPage() {
         </div>
         <div className="space-y-3">
           {upcomingPosts.map((p, i) => (
-            <div key={i} className="flex items-center gap-5 p-4 rounded-[24px] bg-white/40 hover:bg-white border border-transparent hover:border-white cursor-pointer transition-all shadow-sm hover:shadow-clayCardHover group">
+            <div key={i} className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-5 p-4 rounded-[24px] bg-white/40 hover:bg-white border border-transparent hover:border-white cursor-pointer transition-all shadow-sm hover:shadow-clayCardHover group">
               <div className={`w-3 h-3 rounded-full flex-shrink-0 shadow-sm ${p.status === "scheduled" ? "bg-emerald-400 animate-pulse" : "bg-amber-400"}`}/>
               <div className="flex-1 min-w-0">
                 <p className="text-base font-black text-clay-foreground truncate tracking-wide">{p.title}</p>
@@ -226,7 +226,7 @@ export default function DashboardPage() {
       </Card>
 
       {/* AI Quick actions */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-6 relative z-10 pt-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6 relative z-10 pt-4">
         {[
           { label: "Generate 30-Day Plan", color: "from-blue-600 to-indigo-700", href: "/calendar", icon: "📅" },
           { label: "Create New Carousel", color: "from-purple-600 to-pink-600", href: "/editor", icon: "✨" },

@@ -154,21 +154,21 @@ export default function SettingsPage() {
           <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6" strokeLinecap="round" strokeLinejoin="round"/></svg>
         </button>
         <div>
-          <h1 className="font-black text-4xl text-clay-foreground tracking-tight drop-shadow-sm">Settings</h1>
-          <p className="text-clay-muted font-bold text-sm mt-2 uppercase tracking-widest">Manage your account, security, and integrations</p>
+          <h1 className="font-black text-2xl sm:text-4xl text-clay-foreground tracking-tight drop-shadow-sm">Settings</h1>
+          <p className="text-clay-muted font-bold text-xs sm:text-sm mt-2 uppercase tracking-widest">Manage your account, security, and integrations</p>
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-2 bg-white/60 backdrop-blur-md p-2 rounded-[24px] border border-white shadow-sm flex-wrap">
+      <div className="flex gap-2 bg-white/60 backdrop-blur-md p-2 rounded-[24px] border border-white shadow-sm overflow-x-auto">
         {tabs.map(t => (
-          <button key={t} onClick={() => setActiveTab(t)} className={`flex-1 py-2.5 rounded-[16px] text-xs font-black cursor-pointer transition-all min-w-[80px] uppercase tracking-widest ${activeTab === t ? "bg-white text-clay-accent shadow-clayPressed" : "text-clay-muted hover:text-clay-foreground hover:bg-white/60"}`}>{t}</button>
+          <button key={t} onClick={() => setActiveTab(t)} className={`py-2.5 px-3 rounded-[16px] text-xs font-black cursor-pointer transition-all whitespace-nowrap uppercase tracking-widest ${activeTab === t ? "bg-white text-clay-accent shadow-clayPressed" : "text-clay-muted hover:text-clay-foreground hover:bg-white/60"}`}>{t}</button>
         ))}
       </div>
 
       {/* Profile */}
       {activeTab === "Profile" && (
-        <div className="bg-white/70 backdrop-blur-xl rounded-[40px] border border-white shadow-clayCard p-10 space-y-8">
+        <div className="bg-white/70 backdrop-blur-xl rounded-[40px] border border-white shadow-clayCard p-6 sm:p-10 space-y-8">
           <div className="flex items-center gap-6">
             <div className="relative">
               <Avatar name={user.name} size="xl"/>

@@ -115,7 +115,7 @@ export default function RegisterPage() {
           ))}
         </div>
 
-        <div className="bg-white/80 backdrop-blur-2xl rounded-[40px] border border-white shadow-clayDeep p-10">
+        <div className="bg-white/80 backdrop-blur-2xl rounded-[40px] border border-white shadow-clayDeep p-6 sm:p-10">
           {/* Step 1: Role */}
           {step === 1 && (
             <>

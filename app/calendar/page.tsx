@@ -143,17 +143,17 @@ export default function CalendarPage() {
   return (
     <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 lg:py-12 space-y-8 animate-fade-in relative z-10">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div className="flex items-center gap-4">
           <button onClick={() => router.back()} className="p-3 bg-white/60 border border-white hover:bg-white rounded-[20px] transition-colors text-clay-muted shadow-sm">
             <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6" strokeLinecap="round" strokeLinejoin="round"/></svg>
           </button>
           <div>
-            <h1 className="font-black text-4xl text-clay-foreground tracking-tight drop-shadow-sm">Content Calendar</h1>
-            <p className="text-clay-muted font-bold text-sm mt-2 uppercase tracking-widest">March 2026 · {posts.length} plan{posts.length !== 1 ? 's' : ''} generated</p>
+            <h1 className="font-black text-2xl sm:text-4xl text-clay-foreground tracking-tight drop-shadow-sm">Content Calendar</h1>
+            <p className="text-clay-muted font-bold text-xs sm:text-sm mt-2 uppercase tracking-widest">March 2026 · {posts.length} plan{posts.length !== 1 ? 's' : ''} generated</p>
           </div>
         </div>
-        <div className="flex gap-3">
+        <div className="flex gap-3 w-full sm:w-auto">
           {posts.length > 0 && (
             <button
               onClick={handleClear}
@@ -176,7 +176,7 @@ export default function CalendarPage() {
 
       <div className="grid lg:grid-cols-4 gap-6">
         {/* Calendar */}
-        <div className="lg:col-span-3 bg-white/60 backdrop-blur-xl rounded-[40px] border border-white shadow-clayCard p-8">
+        <div className="lg:col-span-3 bg-white/60 backdrop-blur-xl rounded-[40px] border border-white shadow-clayCard p-4 sm:p-8 overflow-x-auto">
           <div className="grid grid-cols-7 gap-1 mb-3">
             {DAYS.map(d => (
               <div key={d} className="text-center text-[10px] font-black text-clay-muted py-1 uppercase tracking-widest">{d}</div>
@@ -195,7 +195,7 @@ export default function CalendarPage() {
                 <div
                   key={day}
                   onClick={() => setSelected(isSelected ? null : day)}
-                  className={`h-20 p-2 rounded-[16px] border cursor-pointer transition-all duration-150 overflow-hidden ${
+                  className={`h-14 sm:h-20 p-1.5 sm:p-2 rounded-[16px] border cursor-pointer transition-all duration-150 overflow-hidden ${
                     isSelected ? "border-clay-accent bg-white shadow-clayCard scale-105" :
                     isToday ? "border-indigo-300 bg-indigo-50/80" :
                     dayPosts.length > 0 ? "border-white/60 bg-white/40 hover:bg-white hover:shadow-sm" :

@@ -75,14 +75,14 @@ export default function PricingSection({ annual = false }: { annual?: boolean })
           <p className="text-lg md:text-xl text-clay-muted font-medium">Start free. Scale as you grow. No hidden fees.</p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8 items-stretch pt-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch pt-8">
           {plans.map((plan) => (
             <div
               key={plan.name}
               className={`
                 relative rounded-[40px] p-8 flex flex-col transition-all duration-300
                 ${plan.highlight
-                  ? "bg-gradient-to-b from-clay-accent to-purple-600 text-white shadow-clayDeep scale-105 z-10 hover:scale-110"
+                  ? "bg-gradient-to-b from-clay-accent to-purple-600 text-white shadow-clayDeep md:scale-105 z-10 md:hover:scale-110"
                   : "bg-white/80 backdrop-blur-xl border border-white shadow-clayCard text-clay-foreground hover:-translate-y-2 hover:shadow-clayCardHover"
                 }
               `}

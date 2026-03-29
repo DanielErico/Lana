@@ -49,7 +49,7 @@ export default function LoginPage() {
           </Link>
         </div>
 
-        <div className="bg-white/80 backdrop-blur-2xl rounded-[40px] border border-white shadow-clayDeep p-10">
+        <div className="bg-white/80 backdrop-blur-2xl rounded-[40px] border border-white shadow-clayDeep p-6 sm:p-10">
             <>
               <h1 className="font-black text-3xl text-clay-foreground mb-2 tracking-tight">Welcome back</h1>
               <p className="text-clay-muted text-base font-medium mb-8">Sign in to your Lana account</p>
