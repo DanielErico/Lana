@@ -14,16 +14,25 @@ export async function POST(req: NextRequest) {
   const { postId, templateId = 'rimberio', caption } = await req.json();
   if (!postId) return NextResponse.json({ error: 'postId required' }, { status: 400 });
 
-  // 1. Load post and brand (with Instagram token)
-  const { data: post } = await supabaseAdmin
+  // 1. Load post
+  const { data: post, error: postErr } = await supabaseAdmin
     .from('posts')
-    .select('*, brands(instagram_user_id, instagram_access_token, instagram_token_expires_at)')
+    .select('*')
     .eq('id', postId)
     .single();
 
+  if (postErr) console.error("Post fetch error:", postErr);
   if (!post) return NextResponse.json({ error: 'Post not found' }, { status: 404 });
 
-  const brand = (post as any).brands;
+  // 1b. Load brand
+  const { data: brand, error: brandErr } = await supabaseAdmin
+    .from('brands')
+    .select('instagram_user_id, instagram_access_token, instagram_token_expires_at')
+    .eq('user_id', post.user_id)
+    .single();
+
+  if (brandErr) console.error("Brand fetch error:", brandErr);
+
   const igToken = brand?.instagram_access_token;
   const igUserId = brand?.instagram_user_id;
 
