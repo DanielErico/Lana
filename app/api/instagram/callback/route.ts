@@ -61,14 +61,25 @@ export async function GET(req: NextRequest) {
   const expiresAt = new Date(Date.now() + (longLivedData.expires_in || 5184000) * 1000).toISOString();
   
   const supabaseAdmin = createAdminClient();
+  
+  // Step 4a: First securely store the tokens
   await supabaseAdmin
     .from('brands')
     .update({
       instagram_access_token: longLivedToken,
-      instagram_user_id: instagramUserId,
       instagram_token_expires_at: expiresAt
     })
     .eq('user_id', userId);
+
+  // Step 4b: Only update IG user ID if we found one
+  if (instagramUserId) {
+    await supabaseAdmin
+      .from('brands')
+      .update({
+        instagram_user_id: instagramUserId
+      })
+      .eq('user_id', userId);
+  }
 
   // Provide debug info in the redirect so user can see what happened
   if (instagramUserId) {
@@ -95,6 +106,14 @@ export async function GET(req: NextRequest) {
       `fb_id=${meData.id || 'unknown'}`,
       `perms=${encodeURIComponent(perms)}`,
     ].join('&');
+    
+    console.error(`[Instagram Callback] Partial Success: Token saved, but no IG ID found. Debug Info:`, {
+      pagesCount: pages.length,
+      facebookUser: meData.name,
+      facebookId: meData.id,
+      permissions: perms,
+    });
+    
     return NextResponse.redirect(new URL(`/settings?instagram=partial&${debugInfo}`, req.url));
   }
 }
