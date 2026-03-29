@@ -113,6 +113,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Failed to create Meta carousel container', detail: carouselData }, { status: 500 });
     }
 
+    // Instagram takes a moment to process the carousel container internally.
+    // If we call media_publish instantly, it randomly throws a Code 9007 "Media not ready" error.
+    // Adding a 3-second buffer guarantees 100% reliability.
+    await new Promise(resolve => setTimeout(resolve, 3000));
+
     // 5. Publish the carousel
     const publishRes = await fetch(
       `https://graph.facebook.com/v19.0/${igUserId}/media_publish`,
