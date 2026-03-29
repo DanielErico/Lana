@@ -11,6 +11,8 @@ const defaultBrand: RimberioBrand = {
   logo: { text: "Lana" }
 };
 
+import { createClientBrowser } from '@/utils/supabase/client';
+
 function SlideRenderer() {
   const searchParams = useSearchParams();
   const postId = searchParams.get('postId');
@@ -24,12 +26,24 @@ function SlideRenderer() {
     if (!postId) return;
     fetch(`/api/posts?postId=${postId}`)
       .then(r => r.json())
-      .then(data => {
-        if (data.slides) {
+      .then(async data => {
+        if (data.post?.slides) {
           const idx = slideIndex !== null ? parseInt(slideIndex) : 0;
-          setSlide(data.slides[idx] || data.slides[0]);
+          setSlide(data.post.slides[idx] || data.post.slides[0]);
+          
+          // Fetch brand for colors and logo
+          if (data.post.user_id) {
+            const supabase = createClientBrowser();
+            const { data: brandData } = await supabase.from('brands').select('*').eq('user_id', data.post.user_id).single();
+            if (brandData) {
+              setBrand({ 
+                colors: brandData.colors || defaultBrand.colors,
+                logo: brandData.logo || defaultBrand.logo,
+                fontFamily: brandData.fontFamily
+              });
+            }
+          }
         }
-        if (data.brand) setBrand({ ...defaultBrand, ...data.brand });
       });
   }, [postId, slideIndex]);
 
