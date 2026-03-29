@@ -39,7 +39,9 @@ export async function POST(req: NextRequest) {
     const appUrl = process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, '') || 'https://lana-five.vercel.app';
     const publishUrl = `${appUrl}/api/posts/publish`;
 
-    const qstashUrl = process.env.QSTASH_URL.replace(/\/$/, '');
+    const qstashBase = process.env.QSTASH_URL.replace(/\/$/, '');
+    // Ensure the /v2/publish/ path is present (Upstash dashboard gives the base URL without it)
+    const qstashUrl = qstashBase.includes('/v2/publish') ? qstashBase : `${qstashBase}/v2/publish`;
     
     // 3. Enqueue the job with QStash
     const qstashResponse = await fetch(`${qstashUrl}/${publishUrl}`, {
