@@ -74,12 +74,27 @@ export async function GET(req: NextRequest) {
   if (instagramUserId) {
     return NextResponse.redirect(new URL(`/settings?instagram=connected&ig_id=${instagramUserId}`, req.url));
   } else {
-    // Check what permissions were actually granted
+    // Debug: Check which FB user authenticated
+    const meRes = await fetch(`https://graph.facebook.com/v19.0/me?fields=id,name&access_token=${longLivedToken}`);
+    const meData = await meRes.json();
+    
+    // Debug: Try with the SHORT-lived token too
+    const pagesShortRes = await fetch(`https://graph.facebook.com/v19.0/me/accounts?access_token=${tokenData.access_token}`);
+    const pagesShortData = await pagesShortRes.json();
+    const shortPages = pagesShortData.data || [];
+
+    // Check permissions
     const permRes = await fetch(`https://graph.facebook.com/v19.0/me/permissions?access_token=${longLivedToken}`);
     const permData = await permRes.json();
     const perms = (permData.data || []).map((p: any) => `${p.permission}:${p.status}`).join(',');
     
-    const debugInfo = `pages_found=${pages.length}&perms=${encodeURIComponent(perms)}&pages_error=${encodeURIComponent(pagesData.error?.message || 'none')}`;
+    const debugInfo = [
+      `pages_long=${pages.length}`,
+      `pages_short=${shortPages.length}`,
+      `fb_user=${encodeURIComponent(meData.name || 'unknown')}`,
+      `fb_id=${meData.id || 'unknown'}`,
+      `perms=${encodeURIComponent(perms)}`,
+    ].join('&');
     return NextResponse.redirect(new URL(`/settings?instagram=partial&${debugInfo}`, req.url));
   }
 }
