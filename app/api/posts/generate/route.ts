@@ -104,6 +104,7 @@ Return ONLY a valid JSON array of post objects. No markdown, no explanation, no 
 [
   {
     "title": "string — engaging headline topic",
+    "caption": "string — engaging instagram caption with emojis and 5-10 relevant hashtags",
     "scheduled_for": "ISO 8601 datetime string",
     "slides": [
       { "id": "1", "slideNum": 1, "layout": "intro_card", "theme": "primary", "headline": "string", "body": "string", "cta": "string", "hasImage": false },
@@ -127,6 +128,7 @@ Rules: headlines under 60 chars, body max 120 chars, keep tone confident and con
     const inserts = posts.map((p: any) => ({
       user_id: userId,
       title: p.title,
+      caption: p.caption,
       content: '',
       slides: p.slides,
       status: 'draft',

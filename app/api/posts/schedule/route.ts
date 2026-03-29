@@ -11,6 +11,10 @@ export async function POST(req: NextRequest) {
 
   const supabaseAdmin = createAdminClient();
 
+  if (!process.env.QSTASH_URL || !process.env.QSTASH_TOKEN) {
+    return NextResponse.json({ error: 'Scheduling not available: Missing QStash API keys on the server.' }, { status: 400 });
+  }
+
   // 1. Save the scheduled time and status to Supabase
   const { error: updateError } = await supabaseAdmin
     .from('posts')
