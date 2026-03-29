@@ -74,8 +74,12 @@ export async function GET(req: NextRequest) {
   if (instagramUserId) {
     return NextResponse.redirect(new URL(`/settings?instagram=connected&ig_id=${instagramUserId}`, req.url));
   } else {
-    // Token saved but no IG business account found
-    const debugInfo = `pages_found=${pages.length}&page_names=${encodeURIComponent(pages.map((p: any) => p.name).join(','))}`;
+    // Check what permissions were actually granted
+    const permRes = await fetch(`https://graph.facebook.com/v19.0/me/permissions?access_token=${longLivedToken}`);
+    const permData = await permRes.json();
+    const perms = (permData.data || []).map((p: any) => `${p.permission}:${p.status}`).join(',');
+    
+    const debugInfo = `pages_found=${pages.length}&perms=${encodeURIComponent(perms)}&pages_error=${encodeURIComponent(pagesData.error?.message || 'none')}`;
     return NextResponse.redirect(new URL(`/settings?instagram=partial&${debugInfo}`, req.url));
   }
 }
