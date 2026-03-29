@@ -16,7 +16,7 @@ export async function GET(req: NextRequest) {
   // Pass userId in the state parameter so we get it back in the callback
   const state = encodeURIComponent(userId);
 
-  const metaOAuthUrl = `https://www.facebook.com/v19.0/dialog/oauth?client_id=${appId}&redirect_uri=${redirectUri}&scope=${scope}&state=${state}&response_type=code`;
+  const metaOAuthUrl = `https://www.facebook.com/v19.0/dialog/oauth?client_id=${appId}&redirect_uri=${redirectUri}&scope=${scope}&state=${state}&response_type=code&auth_type=rerequest`;
 
   return NextResponse.redirect(metaOAuthUrl);
 }
