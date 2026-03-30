@@ -35,6 +35,14 @@ export default function CalendarPage() {
   const [previewPost, setPreviewPost] = useState<Post | null>(null);
   const [scheduling, setScheduling] = useState(false);
   const [scheduleProgress, setScheduleProgress] = useState({ done: 0, total: 0 });
+  const [dialog, setDialog] = useState<{
+    isOpen: boolean;
+    type: 'confirm' | 'alert' | 'success';
+    title: string;
+    message: string;
+    confirmText?: string;
+    onConfirm?: () => void;
+  } | null>(null);
 
   const { brand } = useBrand();
 
@@ -103,32 +111,57 @@ export default function CalendarPage() {
     }
   };
 
-  const handleClear = async () => {
-    if (!confirm('Clear all generated post plans? This cannot be undone.')) return;
-    setClearing(true);
-    const supabase = createClientBrowser();
-    const { data: { session } } = await supabase.auth.getSession();
-    const userId = session?.user?.id;
-    if (userId) await fetch(`/api/posts?userId=${userId}`, { method: 'DELETE' });
-    setPosts([]);
-    setClearing(false);
+  const handleClear = () => {
+    setDialog({
+      isOpen: true,
+      type: 'confirm',
+      title: 'Clear All Plans?',
+      message: 'This will delete all generated post plans forever. This action cannot be undone.',
+      confirmText: 'Clear All',
+      onConfirm: async () => {
+        setDialog(null);
+        setClearing(true);
+        const supabase = createClientBrowser();
+        const { data: { session } } = await supabase.auth.getSession();
+        const userId = session?.user?.id;
+        if (userId) await fetch(`/api/posts?userId=${userId}`, { method: 'DELETE' });
+        setPosts([]);
+        setClearing(false);
+      }
+    });
   };
 
-  const handleAutoSchedule = async () => {
+  const handleAutoSchedule = () => {
     const draftPosts = posts.filter(p => p.status === 'draft');
     if (draftPosts.length === 0) {
-      alert('No draft posts to schedule. Generate a plan first!');
+      setDialog({ isOpen: true, type: 'alert', title: 'No Drafts', message: 'No draft posts to schedule. Generate a plan first!', confirmText: 'Got it' });
       return;
     }
-    if (!confirm(`Schedule ${draftPosts.length} draft post${draftPosts.length > 1 ? 's' : ''} for automatic publishing?`)) return;
+    setDialog({
+      isOpen: true,
+      type: 'confirm',
+      title: 'Auto-Schedule Drafts',
+      message: `Schedule ${draftPosts.length} draft post${draftPosts.length > 1 ? 's' : ''} for automatic publishing at their planned times?`,
+      confirmText: 'Schedule All',
+      onConfirm: () => {
+        setDialog(null);
+        performAutoSchedule(draftPosts);
+      }
+    });
+  };
 
+  const performAutoSchedule = async (draftPosts: Post[]) => {
     setScheduling(true);
     setScheduleProgress({ done: 0, total: draftPosts.length });
 
     const supabase = createClientBrowser();
     const { data: { session } } = await supabase.auth.getSession();
     const userId = session?.user?.id;
-    if (!userId) { alert('Please log in first.'); setScheduling(false); return; }
+    if (!userId) { 
+      setDialog({ isOpen: true, type: 'alert', title: 'Error', message: 'Please log in first.', confirmText: 'Close' });
+      setScheduling(false); 
+      return; 
+    }
 
     let succeeded = 0;
     let failed = 0;
@@ -148,7 +181,6 @@ export default function CalendarPage() {
         });
         if (res.ok) {
           succeeded++;
-          // Update local state immediately
           setPosts(prev => prev.map(p => p.id === post.id ? { ...p, status: 'scheduled' } : p));
         } else {
           failed++;
@@ -164,9 +196,17 @@ export default function CalendarPage() {
 
     setScheduling(false);
     if (failed === 0) {
-      alert(`✅ All ${succeeded} posts scheduled! They'll publish automatically at their planned times.`);
+      setDialog({
+        isOpen: true, type: 'success', title: 'Scheduling Complete',
+        message: `✅ All ${succeeded} posts scheduled! They'll publish automatically at their planned times.`,
+        confirmText: 'Awesome'
+      });
     } else {
-      alert(`Scheduled ${succeeded} posts. ${failed} failed — check console for details.`);
+      setDialog({
+        isOpen: true, type: 'alert', title: 'Scheduling Finished',
+        message: `Scheduled ${succeeded} posts. ${failed} failed — please check console for details.`,
+        confirmText: 'Close'
+      });
     }
   };
 
@@ -595,6 +635,46 @@ export default function CalendarPage() {
               </button>
             </div>
 
+          </div>
+        </div>
+      )}
+
+      {/* Custom Global Dialog */}
+      {dialog?.isOpen && (
+        <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={() => setDialog(null)} />
+          <div className="relative bg-[#F4F5F6] rounded-[32px] shadow-clayDeep border-2 border-white p-8 max-w-sm w-full animate-scale-in text-center flex flex-col items-center">
+            
+            <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-6 shadow-clayButton ${
+              dialog.type === 'confirm' ? 'bg-amber-400' : 
+              dialog.type === 'success' ? 'bg-emerald-400' : 'bg-clay-accent'
+            }`}>
+              {dialog.type === 'confirm' && <svg width="28" height="28" fill="none" stroke="white" strokeWidth="3" viewBox="0 0 24 24"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" strokeLinecap="round" strokeLinejoin="round"/></svg>}
+              {dialog.type === 'alert' && <svg width="28" height="28" fill="none" stroke="white" strokeWidth="3" viewBox="0 0 24 24"><path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" strokeLinecap="round" strokeLinejoin="round"/></svg>}
+              {dialog.type === 'success' && <svg width="28" height="28" fill="none" stroke="white" strokeWidth="3" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round"/></svg>}
+            </div>
+
+            <h3 className="font-black text-2xl text-clay-foreground tracking-tight mb-2">{dialog.title}</h3>
+            <p className="text-sm font-medium text-clay-muted leading-relaxed mb-8">{dialog.message}</p>
+
+            <div className="flex gap-3 w-full">
+              {dialog.type === 'confirm' && (
+                <button
+                  onClick={() => setDialog(null)}
+                  className="flex-1 py-3 px-4 rounded-[16px] bg-white border border-white text-clay-foreground font-black text-sm shadow-sm hover:bg-slate-50 transition-colors cursor-pointer"
+                >
+                  Cancel
+                </button>
+              )}
+              <button
+                onClick={dialog.type === 'confirm' ? dialog.onConfirm : () => setDialog(null)}
+                className={`flex-1 py-3 px-4 rounded-[16px] text-white font-black text-sm shadow-clayButton hover:-translate-y-0.5 transition-all cursor-pointer ${
+                  dialog.type === 'confirm' ? 'bg-red-500 hover:bg-red-600' : 'bg-clay-accent'
+                }`}
+              >
+                {dialog.confirmText || 'OK'}
+              </button>
+            </div>
           </div>
         </div>
       )}
