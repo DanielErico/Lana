@@ -68,7 +68,7 @@ export async function POST(request: NextRequest) {
 
     const dateModeInstruction = dateMode === 'manual' && selectedDates?.length
       ? `Schedule each post on these exact dates in order: ${selectedDates.map((d: string) => new Date(d).toDateString()).join(', ')}`
-      : `Select the best dates for maximum engagement (avoid weekends, prefer Tue-Thu, best times: 9AM, 12PM, 6PM) — generate ${numPosts} posts over the next 30 days`;
+      : `Select the best dates for maximum engagement (avoid weekends, prefer Tue-Thu, best times: 9AM, 12PM, 6PM) — generate ${numPosts} posts over the next 7 days`;
 
     const prompt = `
 You are an expert social media content strategist and copywriter for Instagram carousels.
@@ -124,16 +124,26 @@ Rules: headlines under 60 chars, body max 120 chars, keep tone confident and con
     const jsonText = rawText.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
     const posts = JSON.parse(jsonText);
 
+    // QStash free tier limit is 7 days (604800 seconds). Clamp dates to max 6.9 days from now.
+    const maxAllowedDate = new Date(Date.now() + 6.9 * 24 * 60 * 60 * 1000);
+
     // Insert all posts
-    const inserts = posts.map((p: any) => ({
-      user_id: userId,
-      title: p.title,
-      caption: p.caption,
-      content: '',
-      slides: p.slides,
-      status: 'draft',
-      scheduled_for: p.scheduled_for,
-    }));
+    const inserts = posts.map((p: any) => {
+      let scheduledFor = new Date(p.scheduled_for);
+      // Force it back in time if it generated a date too far in the future
+      if (scheduledFor > maxAllowedDate) {
+        scheduledFor = new Date(maxAllowedDate.getTime() - Math.random() * 24 * 60 * 60 * 1000); // subtract up to 24h randomly to avoid collision
+      }
+      return {
+        user_id: userId,
+        title: p.title,
+        caption: p.caption,
+        content: '',
+        slides: p.slides,
+        status: 'draft',
+        scheduled_for: scheduledFor.toISOString(),
+      };
+    });
 
     const { error } = await (supabaseAdmin.from('posts') as any).insert(inserts);
     if (error) throw error;
